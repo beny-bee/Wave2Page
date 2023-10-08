@@ -21,13 +21,14 @@ def convert_audio_to_midi(input_audio_path, output_directory):
         save_notes
     )
 
-def combine_midi_files(midi_files, output_path):
+def combine_midi_files(midi_files, output_path, instruments):
     # Create a new MIDI file to store the combined tracks
     combined_midi = MidiFile()
 
-    for midi_file_path in midi_files:
+    for midi_file_path, instrument in zip(midi_files,instruments):
         midi_file = MidiFile(midi_file_path)
         for track in midi_file.tracks:
+            track.name = instrument
             combined_midi.tracks.append(track)
 
     # Save the combined MIDI file
