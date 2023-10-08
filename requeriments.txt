@@ -1,1 +1,2 @@
 partitura
+basic-pitch
