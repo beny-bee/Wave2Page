@@ -25,8 +25,11 @@ def convert_audio_to_midi(audio_name):
     wav2midi.combine_midi_files(midi_files, f'{output_directory}/combined.midi')
 
 def convert_midi_to_sheet(audio_name):
-    input_path = f'data/midi/{audio_name}/combined'
-    sheet_name = f'{audio_name}Sheet'
+    input_path = f'data/midi/{audio_name}/vocals_basic_pitch.mid'
+    sheet_name = f'{audio_name}'
+
+    print(f'Converting {input_path} to sheet music...'
+          f'\nOutput will be saved to {sheet_name} directory')
     midi2Sheet.midi2Sheet(input_path, sheet_name)
 
 def main():
