@@ -1,2 +1,4 @@
 partitura
 basic-pitch
+demucs
+mido
