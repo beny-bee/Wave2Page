@@ -4,7 +4,7 @@ import os
 class AudioSplitter:
 
     def __init__(self):
-        self.separator = demucs.api.Separator()
+        self.separator = demucs.api.Separator(model="htdemucs_6s")
 
     def separate(self, input_audio_path, audio_name):
         origin, separated = self.separator.separate_audio_file(input_audio_path)

@@ -4,7 +4,7 @@ import argparse
 import os
 from Midi2Sheet import midi2Sheet
 from Wav2Midi import wav2midi
-from Splitter.Splitter import AudioSplitter
+from splitter.Splitter import AudioSplitter
 
 def separate_audio(input_audio_path, audio_name):
     sp = AudioSplitter()
