@@ -1,0 +1,5 @@
+- Delve into each section a little bit more (more models, ideas, etc)
+- Understand Benja idea
+- Documentation
+- Avoid saving and reading all the files at every step (return audio/mids types and not paths)
+- Create web page

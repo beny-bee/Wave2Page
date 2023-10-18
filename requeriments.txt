@@ -2,3 +2,4 @@ partitura
 basic-pitch
 demucs
 mido
+streamlit
