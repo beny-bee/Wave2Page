@@ -10,8 +10,8 @@ def separate_audio(input_audio_path, audio_name):
 
 def convert_audio_to_midi(audio_name):
     from Wav2Midi import wav2midi
-    input_directory = f'data/audio_separated/{audio_name}'
-    output_directory = f'data/midi/{audio_name}'
+    input_directory = f'../data/audio_separated/{audio_name}'
+    output_directory = f'../data/midi/{audio_name}'
 
     # Create directories if they don't exist
     os.makedirs(output_directory, exist_ok=True)
@@ -27,7 +27,7 @@ def convert_audio_to_midi(audio_name):
 
 def convert_midi_to_sheet(audio_name):
     from Midi2Sheet import midi2Sheet
-    input_path = f'data/midi/{audio_name}/combined.mid'
+    input_path = f'../data/midi/{audio_name}/combined.mid'
     sheet_name = f'{audio_name}'
 
     print(f'Converting {input_path} to sheet music...'
@@ -44,14 +44,13 @@ def main():
     args = parser.parse_args()
 
     path_array = args.path.split("/")
-    path_to_audio = "/".join(path_array[:-1])
     audio_and_extension_name = path_array[-1]
     assert len(audio_and_extension_name.split(".")) == 2, "The audio file must have the extension .wav"
     audio_name = audio_and_extension_name.split(".")[0]
     audio_extension = audio_and_extension_name.split(".")[1]
     assert audio_extension == "wav", "The audio file must have the extension .wav"
     
-    print("File",args.path,"will be used")
+    print("Audio file",args.path,"will be used")
 
     # Separate
     if args.separate:

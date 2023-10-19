@@ -10,7 +10,7 @@ class AudioSplitter:
         origin, separated = self.separator.separate_audio_file(input_audio_path)
         
         # Define the output directory for the separated audio files
-        output_directory = f'data/audio_separated/{audio_name}'
+        output_directory = f'../data/audio_separated/{audio_name}'
         os.makedirs(output_directory, exist_ok=True)
         
         for stem, source in separated.items():

@@ -1,3 +1,4 @@
+import shutil
 import subprocess
 import traceback
 from PIL import Image
@@ -25,8 +26,9 @@ try:
     if uploaded_file is not None:
         with NamedTemporaryFile(dir='.', suffix='.wav') as f:
             f.write(uploaded_file.getbuffer())
-            subprocess.call(['python3', "main.py", f.name, "--separate", "--wav2midi", "--midi2sheet"])
-            st.write("FINISHED")
+            path_to_audio = path_to_root_folder+"data/audio/"+uploaded_file.name
+            shutil.copy(f.name, path_to_audio)
+            subprocess.call(['python3', "main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
     
 except Exception as e:
     traceback.print_exc()
