@@ -14,8 +14,8 @@ path_to_root_folder = './'
 try:
     st.title("Wave2Page")
     image = Image.open(path_to_root_folder+'images/w2pLogo.png')
-    _, second, _ = st.columns([5,3,5])
-    second.image(image, width=300, caption='Developed by Gerard Caravaca, Benjami Parellada and Armando Rodriguez')
+    # _, second, _ = st.columns([5,3,5])
+    st.image(image, caption='Developed by Gerard Caravaca, Benjami Parellada and Armando Rodriguez')
 
     first, second = st.columns([9,2])
     first.header("Subtitle of Wave2Page")

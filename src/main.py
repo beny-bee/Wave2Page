@@ -39,18 +39,21 @@ def main():
     parser.add_argument('--separate', action='store_true', help='Separate audio into tracks')
     parser.add_argument('--wav2midi', action='store_true', help='Convert audio to midi')
     parser.add_argument('--midi2sheet', action='store_true', help='Convert midi to sheet')
+    parser.add_argument('--path', type=str, help='Path of the audio')
 
     args = parser.parse_args()
 
-    audio_name = 'audio_example'
+    input_audio_path = args.path
+    audio_name = (args.path.split("/")[-1]).split(".")[0]
 
-    if args.separate:
-        input_audio_path = f'data/audio/{audio_name}.mp3'
-        separate_audio(input_audio_path, audio_name)
-    if args.wav2midi:
-        convert_audio_to_midi(audio_name)
-    if args.midi2sheet:
-        convert_midi_to_sheet(audio_name)
+    print(audio_name)
+
+    # if args.separate:
+    #     separate_audio(input_audio_path, audio_name)
+    # if args.wav2midi:
+    #     convert_audio_to_midi(audio_name)
+    # if args.midi2sheet:
+    #     convert_midi_to_sheet(audio_name)
 
 if __name__ == '__main__':
     main()
