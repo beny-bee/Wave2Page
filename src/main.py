@@ -10,8 +10,8 @@ def separate_audio(input_audio_path, audio_name):
 
 def convert_audio_to_midi(audio_name):
     from Wav2Midi import wav2midi
-    input_directory = f'../data/audio_separated/{audio_name}'
-    output_directory = f'../data/midi/{audio_name}'
+    input_directory = f'data/audio_separated/{audio_name}'
+    output_directory = f'data/midi/{audio_name}'
 
     # Create directories if they don't exist
     os.makedirs(output_directory, exist_ok=True)
@@ -27,7 +27,7 @@ def convert_audio_to_midi(audio_name):
 
 def convert_midi_to_sheet(audio_name):
     from Midi2Sheet import midi2Sheet
-    input_path = f'../data/midi/{audio_name}/combined.mid'
+    input_path = f'data/midi/{audio_name}/combined.mid'
     sheet_name = f'{audio_name}'
 
     print(f'Converting {input_path} to sheet music...'

@@ -3,3 +3,4 @@ basic-pitch
 demucs
 mido
 streamlit
+lilypond
