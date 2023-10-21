@@ -1,15 +1,14 @@
 # Wave2Page
-Supervised and Experiential Learning (SEL) - Master in Artificial Intelligence
+Intelligent System Project (ISP) - Master in Artificial Intelligence
 
 ## Authors
-- Sonia Rabanaque
+- Gerard Carvaca
+- Benjami Parellada
 - Armando Rodriguez
-- Pablo Ruiz
-- Hasnain Shafqat
 
 ## Running interface for the first time
 These sections show how to create virtual environment for
-our script and how to install dependencies. The first thing to do is to install Python 3.9.
+our script and how to install dependencies. The first thing to do is to install Python 3.11.
 1. Open folder in terminal
 ```bash
 cd <root_folder_of_project>/
@@ -24,6 +23,7 @@ source venv/bin/activate
 ```
 4. Install required dependencies
 ```bash
+pip install git+https://github.com/CarlGao4/demucs#egg=demucs
 pip install -r requirements.txt
 ```
 
@@ -46,7 +46,3 @@ cd <root_folder_of_project>/
 ```bash
 deactivate
 ```
-
-### Auxiliar things to remove
-
-pip install git+https://github.com/CarlGao4/demucs#egg=demucs
