@@ -1,7 +1,6 @@
 git+https://github.com/CarlGao4/demucs#egg=demucs
 partitura
 basic-pitch
-demucs
 mido
 streamlit
 lilypond
