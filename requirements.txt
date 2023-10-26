@@ -4,3 +4,4 @@ basic-pitch
 mido
 streamlit
 lilypond
+librosa

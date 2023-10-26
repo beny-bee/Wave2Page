@@ -3,12 +3,20 @@
 import argparse
 import os
 
+import librosa
+
+def get_tempo(audio_file):
+    y, sr = librosa.load(audio_file, sr=None)
+    onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+    tempo, _ = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
+    return tempo
+
 def separate_audio(input_audio_path, audio_name):
     from Splitter.Splitter import AudioSplitter
     sp = AudioSplitter()
     sp.separate(input_audio_path, audio_name)
 
-def convert_audio_to_midi(audio_name):
+def convert_audio_to_midi(audio_name, tempo):
     from Wav2Midi import wav2midi
     input_directory = f'data/audio_separated/{audio_name}'
     output_directory = f'data/midi/{audio_name}'
@@ -16,14 +24,20 @@ def convert_audio_to_midi(audio_name):
     # Create directories if they don't exist
     os.makedirs(output_directory, exist_ok=True)
 
+    # Delete files in output_directory
+    for file in os.listdir(output_directory):
+        os.remove(os.path.join(output_directory, file))
+
     instruments = []
     for audio_file in os.listdir(input_directory):
+        if audio_file.split(".")[0] == 'other':
+            continue
         input_audio_path = os.path.join(input_directory, audio_file)
-        wav2midi.convert_audio_to_midi(input_audio_path, output_directory)
+        wav2midi.convert_audio_to_midi(input_audio_path, output_directory, tempo)
         instruments.append(audio_file.split(".")[0])
 
     midi_files = [os.path.join(output_directory, midi_file) for midi_file in os.listdir(output_directory)]
-    wav2midi.combine_midi_files(midi_files, f'{output_directory}/combined.mid', instruments)
+    wav2midi.combine_midi_files(midi_files, f'{output_directory}/combined.mid', instruments, tempo)
 
 def convert_midi_to_sheet(audio_name):
     from Midi2Sheet import midi2Sheet
@@ -52,13 +66,17 @@ def main():
     
     print("Audio file",args.path,"will be used")
 
+    # Get the tempo
+    tempo = round(get_tempo(args.path))
+    print(f'Tempo: {tempo} BPM')
+
     # Separate
     if args.separate:
         separate_audio(args.path, audio_name)
     
     # Wav2Midi
     if args.wav2midi:
-        convert_audio_to_midi(audio_name)
+        convert_audio_to_midi(audio_name, tempo)
 
     # Midi2Sheet
     if args.midi2sheet:
