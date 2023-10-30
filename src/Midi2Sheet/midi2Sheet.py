@@ -19,7 +19,7 @@ import subprocess
 def midi2Sheet(midiPath, sheetName, mode="pdf"):
     assert mode in ["pdf", "png"], "mode must be pdf or png"
     
-    # Create the output directory if it doesn't exist
+    # Create the output directory if it doesn't existmus
     os.makedirs(f'data/sheet/{sheetName}', exist_ok=True)
     
     # On Windows, the command might be "MuseScore3.exe"
@@ -29,6 +29,6 @@ def midi2Sheet(midiPath, sheetName, mode="pdf"):
     outPath = f"data/sheet/{sheetName}/{sheetName}.{mode}"
     
     # Run MuseScore to convert the MIDI file to sheet music
-    subprocess.run([musescore_command, midiPath, "-o", outPath])
+    subprocess.run([musescore_command, midiPath, "-o", outPath]) #"--score-mp3"
     
     print(f"Sheet music saved to {outPath}")
