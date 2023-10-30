@@ -1,4 +1,4 @@
-python3.9-venv
+python3.8-venv
 freeglut3-dev
 libgtk2.0-dev
 libasound2-dev
