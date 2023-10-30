@@ -3,9 +3,9 @@
 import argparse
 import os
 
-import librosa
 
 def get_tempo(audio_file):
+    import librosa
     y, sr = librosa.load(audio_file, sr=None)
     onset_env = librosa.onset.onset_strength(y=y, sr=sr)
     tempo, _ = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
@@ -30,11 +30,12 @@ def convert_audio_to_midi(audio_name, tempo):
 
     instruments = []
     for audio_file in os.listdir(input_directory):
-        if audio_file.split(".")[0] == 'other':
+        instrument = audio_file.split(".")[0]
+        if instrument == 'other':
             continue
         input_audio_path = os.path.join(input_directory, audio_file)
         wav2midi.convert_audio_to_midi(input_audio_path, output_directory, tempo)
-        instruments.append(audio_file.split(".")[0])
+        instruments.append(instrument)
 
     midi_files = [os.path.join(output_directory, midi_file) for midi_file in os.listdir(output_directory)]
     wav2midi.combine_midi_files(midi_files, f'{output_directory}/combined.mid', instruments, tempo)
