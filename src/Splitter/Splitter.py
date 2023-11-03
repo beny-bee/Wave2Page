@@ -4,9 +4,11 @@ import os
 class AudioSplitter:
 
     def __init__(self):
-        self.separator = demucs.api.Separator(model="htdemucs_6s")
+        self.separator = demucs.api.Separator(model="htdemucs_6s", progress=True)
+        self.piano_improver = demucs.api.Separator(model="htdemucs_6s")
 
     def separate(self, input_audio_path, audio_name):
+        print('Separating audio sources...')
         origin, separated = self.separator.separate_audio_file(input_audio_path)
         
         # Define the output directory for the separated audio files
