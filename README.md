@@ -36,13 +36,19 @@ pip install -r requirements.txt
 ```bash
 cd <root_folder_of_project>/
 ```
-2. Running the interface code. The localhost will be automatically opened.
+2. Running the interface code of Streamlit. The localhost will be automatically opened.
  ```bash
  streamlit run interface.py 
  ```
- Use ```--server.headless true``` if you don't want to get the browser opened automatically.
- 
-3. Close virtual environment
+Use ```--server.headless true``` if you don't want to get the browser opened automatically.
+
+3. Or running the interface code of Flask.
+ ```bash
+ cd app/
+ python3 app.py 
+ ```
+
+4. Close virtual environment
 ```bash
 deactivate
 ```
