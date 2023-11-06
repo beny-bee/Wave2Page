@@ -12,6 +12,22 @@
 
     <hr class="my-4">
     <p>Click here!</p>
-    <a class="btn btn-primary btn-lg" href="/contact" role="button">Contact</a>
+    <form class="btn btn-primary btn-lg" method="POST" action="/upload" enctype="multipart/form-data">
+      <input type="file" name="file">
+      <input type="submit" value="Upload">
+    </form>
+
+    {% if filename%}
+        <p>The file '{{ filename }}' was successfully uploaded.</p>
+
+        {% for image in png_files %}
+            <li>
+                <img src="{{ url_for('static', filename=image) }}" alt="{{ image }}">
+            </li>
+        {% endfor %}
+        
+    {% endif %}
+
+    <!-- <a class="btn btn-primary btn-lg" href="/contact" role="button">Contact</a> -->
   </div>
 {% endblock %}

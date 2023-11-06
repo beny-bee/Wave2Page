@@ -2,7 +2,9 @@
 
 import argparse
 import os
+from music21 import midi
 
+SEPARATOR = "\\" if os.name == 'nt' else "/"
 
 def get_tempo(audio_file):
     import librosa
@@ -13,13 +15,13 @@ def get_tempo(audio_file):
 
 def separate_audio(input_audio_path, audio_name):
     from Splitter.Splitter import AudioSplitter
-    sp = AudioSplitter()
+    sp = AudioSplitter(SEPARATOR)
     sp.separate(input_audio_path, audio_name)
 
 def convert_audio_to_midi(audio_name, tempo):
     from Wav2Midi import wav2midi
-    input_directory = f'data/audio_separated/{audio_name}'
-    output_directory = f'data/midi/{audio_name}'
+    input_directory = SEPARATOR.join(["data", "audio_separated", audio_name])
+    output_directory = SEPARATOR.join(["data", "midi", audio_name])
 
     # Create directories if they don't exist
     os.makedirs(output_directory, exist_ok=True)
@@ -38,16 +40,36 @@ def convert_audio_to_midi(audio_name, tempo):
         instruments.append(instrument)
 
     midi_files = [os.path.join(output_directory, midi_file) for midi_file in os.listdir(output_directory)]
-    wav2midi.combine_midi_files(midi_files, f'{output_directory}/combined.mid', instruments, tempo)
+    wav2midi.combine_midi_files(midi_files, f'{output_directory}{SEPARATOR}combined.mid', instruments, tempo)
+    
+#     aux_midi = midi.MidiFile()
+#     aux_midi.open(f'{output_directory}/combined.mid', "rb")
+#     aux_midi.read()
+#     aux_midi.close()
+#     print(aux_midi.tracks)
+#     for t in aux_midi.tracks:
+#         for e in [t.events[0]]:
+#             print(e.type)
+#     # aux_midi = midi.translate.midiFilePathToStream(f'{output_directory}/combined.mid')
+#     parts = aux_midi.parts
+#     for part,instrument in zip(parts,instruments):
+#         print(part.partName)
+#         part.partName = instrument
+#         print(part.partName)
+#     aux_midi = midi.translate.streamToMidiFile(aux_midi)
+#     aux_midi.open(f'{output_directory}/combined.mid', "wb")
+#     aux_midi.write()
+#     aux_midi.close()
+            
 
 def convert_midi_to_sheet(audio_name):
     from Midi2Sheet import midi2Sheet
-    input_path = f'data/midi/{audio_name}/combined.mid'
+    input_path = SEPARATOR.join(["data", "midi", audio_name, "combined.mid"])
     sheet_name = f'{audio_name}'
 
     print(f'Converting {input_path} to sheet music...'
           f'\nOutput will be saved to {sheet_name} directory')
-    midi2Sheet.midi2Sheet(input_path, sheet_name)
+    midi2Sheet.midi2Sheet(input_path, sheet_name, SEPARATOR, mode="png")
 
 def main():
     parser = argparse.ArgumentParser(description='Process audio and midi files.')
@@ -58,7 +80,7 @@ def main():
     
     args = parser.parse_args()
 
-    path_array = args.path.split("/")
+    path_array = args.path.split(SEPARATOR)
     audio_and_extension_name = path_array[-1]
     assert len(audio_and_extension_name.split(".")) == 2, "The audio file must have the extension .wav"
     audio_name = audio_and_extension_name.split(".")[0]
