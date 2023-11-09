@@ -23,32 +23,21 @@ source venv/bin/activate
 ```
 4. Install required dependencies
 ```bash
-pip install git+https://github.com/CarlGao4/demucs#egg=demucs
 pip install -r requirements.txt
 ```
 
 ## Execute code
-- Or open the already hosted public application:
-
-    https://xd.streamlit.app/
-
 1. Open folder in terminal
 ```bash
 cd <root_folder_of_project>/
 ```
-2. Running the interface code of Streamlit. The localhost will be automatically opened.
- ```bash
- streamlit run interface.py 
- ```
-Use ```--server.headless true``` if you don't want to get the browser opened automatically.
 
-3. Or running the interface code of Flask.
+2. Running the interface code of Flask.
  ```bash
- cd app/
- python3 app.py 
+ python3 app/app.py 
  ```
 
-4. Close virtual environment
+3. Close virtual environment
 ```bash
 deactivate
 ```

@@ -2,7 +2,6 @@ git+https://github.com/CarlGao4/demucs#egg=demucs
 partitura
 basic-pitch
 mido
-streamlit
 lilypond
 librosa
 flask
