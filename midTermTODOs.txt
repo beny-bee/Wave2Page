@@ -1,0 +1,20 @@
+
+Section 1: Benja
+Section 2: Armand
+Section 3: Armand
+Section 4: Revisar la resta
+Section 5: Gerard Gantt + Revisar
+
+
+Presentation: 
+	Portada: 1: Armand
+	Problema: 1/2: Benja
+	Background and contributions: 1/2: Benja
+	Requisits: 1: Armand
+	Design solution (arq): 4
+		General: Armand
+		Cadascu la seva
+	Risk analysis: 1: Gerard
+	Propers passos (Web) i done: 1: Gerard
+	
+	Demo: Console
