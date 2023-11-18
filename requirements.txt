@@ -5,3 +5,4 @@ mido
 lilypond
 librosa
 flask
+music21

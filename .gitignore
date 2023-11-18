@@ -2,3 +2,5 @@
 **/__pycache__
 wavEnvironment
 venv
+.idea
+.streamlit
