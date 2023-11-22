@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import sys
 import subprocess
 from flask import Flask, render_template, redirect, request, send_from_directory
 
-DEVELOPMENT_ENV = True
+DEVELOPMENT_ENV = False
+PYTHONUNBUFFERED=0
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
@@ -17,12 +22,12 @@ app_data = {
     "keywords": "wave, page, music",
 }
 
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = 'data/audio'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-PNG_FOLDER = '../static/'
+PNG_FOLDER = 'data/sheet/'
 app.config['PNG_FOLDER'] = PNG_FOLDER
 
 @app.route("/")
@@ -54,20 +59,22 @@ def upload_file():
     file = request.files['file']
     filename = file.filename
 
-    # Check if the file has a valid extension (.wav in this case)
     if file and filename.endswith('.wav'):
         # Save the uploaded file to the upload folder
         path_to_audio = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # path_to_audio= path_to_audio.replace("\\","/")
         file.save(path_to_audio)
-        subprocess.call(['python', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
         
-        # Create folder correctly
+        print("Calling python code")
+        # subprocess.call(['python', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
         
-        path = app.config['PNG_FOLDER']
-        png_files = [path+f for f in os.listdir(path) if f.endswith('.png')]
-        # print(app.config['PNG_FOLDER']+filename.split(".")[0])
-        # print(os.listdir(app.config['PNG_FOLDER']+filename.split(".")[0]))
+        # Get sheets paths
+        sheetsPath = app.config['PNG_FOLDER'] + filename.split(".")[0] + "/"
+        sheetsPathInApp = "../"+sheetsPath
+        png_files = [sheetsPathInApp+f for f in os.listdir(sheetsPath) if f.endswith('.png')]
+
         print(png_files)
+        
         return render_template("index.html", filename=filename, app_data=app_data, png_files=png_files)
     else:
         return 'Invalid file format. Please upload a .wav file.'

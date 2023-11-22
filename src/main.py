@@ -14,7 +14,7 @@ def get_tempo(audio_file):
     return tempo
 
 def separate_audio(input_audio_path, audio_name):
-    from splitter.Splitter import AudioSplitter
+    from Splitter.Splitter import AudioSplitter
     sp = AudioSplitter(SEPARATOR)
     sp.separate(input_audio_path, audio_name)
 

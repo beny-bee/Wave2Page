@@ -22,7 +22,7 @@
 
         {% for image in png_files %}
             <li>
-                <img src="{{ url_for('static', filename=image) }}" alt="{{ image }}">
+                <img src="{{image}}" alt="{{image}}" height="1000">
             </li>
         {% endfor %}
         
