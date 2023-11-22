@@ -2,3 +2,7 @@
 **/__pycache__
 wavEnvironment
 venv
+**/*.wav
+**/*.mid
+data/**/*.png
+data/**/*.pdf
