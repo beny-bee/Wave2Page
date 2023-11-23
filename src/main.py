@@ -1,46 +1,42 @@
-# File: main.py
-
-import argparse
 import os
+import librosa
+import argparse
 from music21 import midi
+from Wav2Midi import wav2midi
+from Midi2Sheet import midi2Sheet
+from Splitter.Splitter import AudioSplitter
 
 SEPARATOR = "\\" if os.name == 'nt' else "/"
 
 def get_tempo(audio_file):
-    import librosa
     y, sr = librosa.load(audio_file, sr=None)
     onset_env = librosa.onset.onset_strength(y=y, sr=sr)
     tempo, _ = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
     return tempo
 
-def separate_audio(input_audio_path, audio_name):
-    from Splitter.Splitter import AudioSplitter
+def separate_audio(input_path, output_path):
     sp = AudioSplitter(SEPARATOR)
-    sp.separate(input_audio_path, audio_name)
+    sp.separate(input_path, output_path)
 
-def convert_audio_to_midi(audio_name, tempo):
-    from Wav2Midi import wav2midi
-    input_directory = SEPARATOR.join(["data", "audio_separated", audio_name])
-    output_directory = SEPARATOR.join(["data", "midi", audio_name])
-
+def convert_audio_to_midi(input_path, output_path, tempo):
     # Create directories if they don't exist
-    os.makedirs(output_directory, exist_ok=True)
+    os.makedirs(output_path, exist_ok=True)
 
     # Delete files in output_directory
-    for file in os.listdir(output_directory):
-        os.remove(os.path.join(output_directory, file))
+    for file in os.listdir(output_path):
+        os.remove(os.path.join(output_path, file))
 
     instruments = []
-    for audio_file in os.listdir(input_directory):
+    for audio_file in os.listdir(input_path):
         instrument = audio_file.split(".")[0]
         if instrument == 'other':
             continue
-        input_audio_path = os.path.join(input_directory, audio_file)
-        wav2midi.convert_audio_to_midi(input_audio_path, output_directory, tempo)
+        input_audio_path = os.path.join(input_path, audio_file)
+        wav2midi.convert_audio_to_midi(input_audio_path, output_path, tempo)
         instruments.append(instrument)
 
-    midi_files = [os.path.join(output_directory, midi_file) for midi_file in os.listdir(output_directory)]
-    wav2midi.combine_midi_files(midi_files, f'{output_directory}{SEPARATOR}combined.mid', instruments, tempo)
+    midi_files = [os.path.join(output_path, midi_file) for midi_file in os.listdir(output_path)]
+    wav2midi.combine_midi_files(midi_files, f'{output_path}{SEPARATOR}combined.mid', instruments, tempo)
     
 #     aux_midi = midi.MidiFile()
 #     aux_midi.open(f'{output_directory}/combined.mid', "rb")
@@ -62,48 +58,63 @@ def convert_audio_to_midi(audio_name, tempo):
 #     aux_midi.close()
             
 
-def convert_midi_to_sheet(audio_name):
-    from Midi2Sheet import midi2Sheet
-    input_path = SEPARATOR.join(["data", "midi", audio_name, "combined.mid"])
-    sheet_name = f'{audio_name}'
-
-    print(f'Converting {input_path} to sheet music...'
-          f'\nOutput will be saved to {sheet_name} directory')
-    midi2Sheet.midi2Sheet(input_path, sheet_name, SEPARATOR, mode="png")
+def convert_midi_to_sheet(input_path, output_path):
+    print(f'Converting {input_path} to sheet music...\n Output will be saved to {output_path} directory')
+    midi2Sheet.midi2Sheet(f"{input_path}{SEPARATOR}combined.mid", output_path, SEPARATOR, mode="png")
 
 def main():
-    parser = argparse.ArgumentParser(description='Process audio and midi files.')
-    parser.add_argument('path', type=str, help='Path of the audio. Example: python3 main.py path/to/audio.mp3')
+    parser = argparse.ArgumentParser(description='Process audio and midi files to generate music sheeets.')
+    parser.add_argument('input_path', type=str, help='Path of the audio for the first process. Example: python3 main.py path/to/audio.mp3')
     parser.add_argument('--separate', action='store_true', help='Separate audio into tracks')
     parser.add_argument('--wav2midi', action='store_true', help='Convert audio to midi')
     parser.add_argument('--midi2sheet', action='store_true', help='Convert midi to sheet')
-    
-    args = parser.parse_args()
 
-    path_array = args.path.split(SEPARATOR)
-    audio_and_extension_name = path_array[-1]
-    assert len(audio_and_extension_name.split(".")) == 2, "The audio file must have the extension .wav"
-    audio_name = audio_and_extension_name.split(".")[0]
-    audio_extension = audio_and_extension_name.split(".")[1]
-    assert audio_extension == "wav", "The audio file must have the extension .wav"
+    args = parser.parse_args()
+    input_path_original = args.input_path
+    input_path = args.input_path
+
+    if args.separate:
+        assert input_path_original.startswith(f"data{SEPARATOR}audio"), f"The path '{input_path_original}' when using --separate should start with data{SEPARATOR}audio"
+        audio_and_extension_name = input_path_original.split(SEPARATOR)[-1].split(".")
+        assert len(audio_and_extension_name) == 2, "The audio file must have the extension .wav"
+        assert audio_and_extension_name[1] == "wav", "The audio file must have the extension .wav"
+    elif args.wav2midi:
+        assert input_path_original.startswith(f"data{SEPARATOR}separated"), f"The path '{input_path_original}' when using --wav2midi should start with data{SEPARATOR}separated"
+        assert input_path_original.split(SEPARATOR)[-1] == "", f"The path '{input_path_original}' should be a directory when using --wav2midi. End the path with {SEPARATOR}"
+    elif args.midi2sheet:
+        assert input_path_original.startswith(f"data{SEPARATOR}midi"), f"The path '{input_path_original}' when using --midi2sheet should start with data{SEPARATOR}midi"
+        assert input_path_original.split(SEPARATOR)[-1] == "", f"The path '{input_path_original}' should be a directory when using --midi2sheet. End the path with {SEPARATOR}"
     
-    print("Audio file",args.path,"will be used")
+    print(f"Audio file from {input_path_original} will be used")
 
     # Get the tempo
-    tempo = round(get_tempo(args.path))
-    print(f'Tempo: {tempo} BPM')
+    tempo = round(get_tempo(input_path_original)) if args.separate else 120
+    print(f"Tempo: {tempo} BPM ({'Calculated' if args.separate else 'Default'})")
 
     # Separate
     if args.separate:
-        separate_audio(args.path, audio_name)
+        output_path = input_path_original.replace(f"data{SEPARATOR}audio",f"data{SEPARATOR}separated").replace(".wav","")
+        separate_audio(input_path, output_path)
     
     # Wav2Midi
     if args.wav2midi:
-        convert_audio_to_midi(audio_name, tempo)
-
+        if args.separate:
+            input_path = input_path.replace(f"data{SEPARATOR}audio",f"data{SEPARATOR}separated").replace(".wav","")
+            output_path = input_path_original.replace(f"data{SEPARATOR}audio",f"data{SEPARATOR}midi").replace(".wav","")
+        else:
+            output_path = input_path_original.replace(f"data{SEPARATOR}separated",f"data{SEPARATOR}midi").replace(".wav","")
+        convert_audio_to_midi(input_path, output_path, tempo)
+        
     # Midi2Sheet
     if args.midi2sheet:
-        convert_midi_to_sheet(audio_name)
+        output_path = input_path_original.replace(f"data{SEPARATOR}midi",f"data{SEPARATOR}sheet").replace(".wav","")
+        if args.separate:
+            input_path = input_path.replace(f"data{SEPARATOR}audio",f"data{SEPARATOR}midi")
+            output_path = input_path_original.replace(f"data{SEPARATOR}audio",f"data{SEPARATOR}sheet").replace(".wav","")
+        elif args.wav2midi:
+            input_path = input_path.replace(f"data{SEPARATOR}separated",f"data{SEPARATOR}midi")
+            output_path = input_path_original.replace(f"data{SEPARATOR}separated",f"data{SEPARATOR}sheet").replace(".wav","")
+        convert_midi_to_sheet(input_path, output_path)
 
 if __name__ == '__main__':
     main()

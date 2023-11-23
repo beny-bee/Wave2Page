@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-import sys
+import shutil
 import subprocess
-from flask import Flask, render_template, redirect, request, send_from_directory
+from flask import Flask, render_template, redirect, request, send_from_directory, url_for
 
-DEVELOPMENT_ENV = False
+DEVELOPMENT_ENV = True
 PYTHONUNBUFFERED=0
 
 import logging
@@ -28,6 +28,7 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 PNG_FOLDER = 'data/sheet/'
+PNG_FOLDER = 'app/static/'
 app.config['PNG_FOLDER'] = PNG_FOLDER
 
 @app.route("/")
@@ -62,18 +63,19 @@ def upload_file():
     if file and filename.endswith('.wav'):
         # Save the uploaded file to the upload folder
         path_to_audio = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        # path_to_audio= path_to_audio.replace("\\","/")
         file.save(path_to_audio)
         
         print("Calling python code")
-        # subprocess.call(['python', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
-        
-        # Get sheets paths
-        sheetsPath = app.config['PNG_FOLDER'] + filename.split(".")[0] + "/"
-        sheetsPathInApp = "../"+sheetsPath
-        png_files = [sheetsPathInApp+f for f in os.listdir(sheetsPath) if f.endswith('.png')]
+        subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
 
-        print(png_files)
+        # Copy generated sheets to static folder
+        png_files = []
+        origin = path_to_audio.replace("audio/","sheet/").replace(".wav","")
+        for f in os.listdir(origin):
+            if f.endswith('.png'):
+                destin = app.config['PNG_FOLDER']+f
+                shutil.copyfile(origin+"/"+f, destin)
+                png_files.append(destin.replace("app/",""))
         
         return render_template("index.html", filename=filename, app_data=app_data, png_files=png_files)
     else:

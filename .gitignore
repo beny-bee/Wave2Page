@@ -4,5 +4,5 @@ wavEnvironment
 venv
 **/*.wav
 **/*.mid
-data/**/*.png
+**/*.png
 data/**/*.pdf

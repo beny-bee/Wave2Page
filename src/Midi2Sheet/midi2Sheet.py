@@ -16,20 +16,18 @@ import subprocess
 #         print(f"Done {i+1}/{len(score.parts)}", end="\r")
 
 
-def midi2Sheet(midiPath, sheetName, SEPARATOR, mode="pdf"):
+def midi2Sheet(input_path, output_path, SEPARATOR, mode="pdf"):
     assert mode in ["pdf", "png"], "mode must be pdf or png"
     
     # Create the output directory if it doesn't exists
-    path = SEPARATOR.join(['data', 'sheet', sheetName])
-    os.makedirs(path, exist_ok=True)
+    os.makedirs(output_path, exist_ok=True)
     
-    # On Windows, the command might be "MuseScore3.exe"
+    # On Windows, the command might be r"C:\Program Files\MuseScore 4\bin\MuseScore4.exe"
     musescore_command = pt.io.musescore.find_musescore() #"mscore" for benja
     
+    sheetName = output_path.split(SEPARATOR)[-2]
     # Define the output path for the sheet music
-    outPath = f"{path}{SEPARATOR}{sheetName}.{mode}"
+    outPath = f"{output_path}{SEPARATOR}{sheetName}.{mode}"
     
     # Run MuseScore to convert the MIDI file to sheet music
-    subprocess.run([musescore_command, midiPath, "-o", outPath]) #"--score-mp3"
-    
-    print(f"Sheet music saved to {outPath}")
+    subprocess.run([musescore_command, input_path, "-o", outPath]) #"--score-mp3"
