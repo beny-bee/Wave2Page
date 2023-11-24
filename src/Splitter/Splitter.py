@@ -15,14 +15,11 @@ class AudioSplitter:
         # Define the output directory for the separated audio files
         os.makedirs(output_audio_path, exist_ok=True)
         
-        output_path_others = ''
         for stem, source in separated.items():
             output_path = os.path.join(output_audio_path, f'{stem}.wav')
-            if stem == 'other':
-                output_path_others = output_path
             demucs.api.save_audio(source, output_path, samplerate=self.separator.samplerate)
             
-        origin, separated = self.karaoke_separator.separate_audio_file(output_path_others)
+        origin, separated = self.separator.separate_audio_file(output_path_others)
         for stem, source in separated.items():
             if stem in ['piano', 'guitar', 'other']:
                 output_path = os.path.join(output_audio_path, f'{stem}.wav')
