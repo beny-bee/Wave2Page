@@ -41,3 +41,23 @@ cd <root_folder_of_project>/
 ```bash
 deactivate
 ```
+
+## Windows environment using Anaconda
+
+1. Create Anaconda environment
+```bash
+conda create --name wave2page
+```
+2. Open environment
+```bash
+conda activate wave2page
+```
+3. Install required dependencies
+```bash
+conda env update --file environment-cuda.yml --prune
+pip install -r requirements.txt
+```
+4. Close environment
+```bash
+conda deactivate
+```
