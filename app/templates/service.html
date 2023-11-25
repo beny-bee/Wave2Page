@@ -1,7 +1,85 @@
 {% extends 'layout.html' %}
 {% set active_page = "service" %}
-
+    
 {% block body %}
-    <h1>{{ app_data['description'] }}</h1>
-    <h2>Services page</h2>
+
+<h1>{{ app_data['description'] }}</h1>
+<h2>YouTube</h2>
+
+<form id="Youtube_download" action="/upload_file_youtube" method="post">
+    <div class="form-group">
+        <label for="video_url">YouTube URL:</label>
+        <input type="text" id="video_url" name="video_url">
+    </div>
+    <div class="form-group">
+        <label for="filename">Filename:</label>
+        <input type="text" id="filename" name="filename">
+    </div>
+    <input type="submit" value="Download Audio">
+</form>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="message">
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
+{% if filename%}
+    <p>The file '{{ filename }}' was successfully uploaded.</p>
+
+    {% for image in png_files %}
+        <li>
+            <img src="{{image}}" alt="{{image}}" height="1000">
+        </li>
+    {% endfor %}
+
+{% endif %}
+
+<style>
+    form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        gap: 10px; /* Adds a gap between label and input */
+    }
+    label {
+        margin-right: 10px; /* Reduce or remove margin if needed */
+        font-weight: bold;
+        white-space: nowrap; /* Prevents the label from wrapping */
+    }
+    input[type="text"] {
+        flex-grow: 1; /* Allows input to take up remaining space */
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+    }
+    input[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+    .message {
+        color: #0b781d;
+        margin-bottom: 20px;
+    }
+</style>
+
 {% endblock %}

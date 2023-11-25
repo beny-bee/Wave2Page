@@ -3,15 +3,18 @@
 import os
 import shutil
 import subprocess
-from flask import Flask, render_template, redirect, request, send_from_directory, url_for
+from flask import Flask, render_template, redirect, request, send_from_directory, url_for, flash
+from utils import youtubeService as ys
 
 DEVELOPMENT_ENV = True
 PYTHONUNBUFFERED=0
+
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 app_data = {
     "name": "Wave2Page",
@@ -64,7 +67,6 @@ def upload_file():
         # Save the uploaded file to the upload folder
         path_to_audio = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(path_to_audio)
-        
         print("Calling python code")
         subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
 
@@ -80,6 +82,29 @@ def upload_file():
         return render_template("index.html", filename=filename, app_data=app_data, png_files=png_files)
     else:
         return 'Invalid file format. Please upload a .wav file.'
+
+@app.route('/upload_file_youtube', methods=['POST'])
+def upload_file_youtube():
+    video_url = request.form['video_url']
+    filename = request.form['filename']
+    ys.YoutubeAudioDownload(video_url, filename, app.config['UPLOAD_FOLDER'])
+    flash("Succesfuly dowloaded audio from youtube!")  # Flashing the success or error message
+    
+    path_to_audio = os.path.join(app.config['UPLOAD_FOLDER'], filename+'.wav')
+    flash("System working on sheet generation...")
+    subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
+    flash("Succesfuly!")
+    
+    # Copy generated sheets to static folder
+    png_files = []
+    origin = path_to_audio.replace("audio/","sheet/").replace(".wav","")
+    for f in os.listdir(origin):
+        if f.endswith('.png'):
+            destin = app.config['PNG_FOLDER']+f
+            shutil.copyfile(origin+"/"+f, destin)
+            png_files.append(destin.replace("app/",""))
+    
+    return render_template("service.html", filename=filename, app_data=app_data, png_files=png_files)
 
 if __name__ == "__main__":
     app.run(debug=DEVELOPMENT_ENV)
