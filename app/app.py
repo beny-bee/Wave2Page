@@ -4,7 +4,7 @@ import os
 import shutil
 import subprocess
 from flask import Flask, render_template, redirect, request, send_from_directory, url_for, flash
-from utils import youtubeService as ys
+from services import youtubeService as ys
 
 DEVELOPMENT_ENV = True
 PYTHONUNBUFFERED=0
@@ -19,20 +19,23 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app_data = {
     "name": "Wave2Page",
     "description": "A simple song to music sheet conversor",
-    "author": "Carvaca, Gerard and Rodriguez, Armando and Parellada, Benjami",
+    "author": "Gerard Carvaca and Armando Rodriguez and Benjami Parellada",
     "html_title": "Wave2Page",
     "project_name": "Wave2Page",
     "keywords": "wave, page, music",
 }
 
-UPLOAD_FOLDER = 'data/audio'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+app.config['UPLOAD_FOLDER'] = 'data/audio/'
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
-PNG_FOLDER = 'data/sheet/'
-PNG_FOLDER = 'app/static/'
-app.config['PNG_FOLDER'] = PNG_FOLDER
+app.config['PNG_FOLDER'] = 'app/static/images/'
+if not os.path.exists(app.config['PNG_FOLDER']):
+    os.makedirs(app.config['PNG_FOLDER'])
+
+app.config['WAV_FOLDER'] = 'app/static/audio/'
+if not os.path.exists(app.config['WAV_FOLDER']):
+    os.makedirs(app.config['WAV_FOLDER'])
 
 @app.route("/")
 def index():
@@ -65,8 +68,9 @@ def upload_file():
 
     if file and filename.endswith('.wav'):
         # Save the uploaded file to the upload folder
-        path_to_audio = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        path_to_audio = app.config['UPLOAD_FOLDER'] + filename
         file.save(path_to_audio)
+
         print("Calling python code")
         subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
 
@@ -90,10 +94,10 @@ def upload_file_youtube():
     ys.YoutubeAudioDownload(video_url, filename, app.config['UPLOAD_FOLDER'])
     flash("Succesfuly dowloaded audio from youtube!")  # Flashing the success or error message
     
-    path_to_audio = os.path.join(app.config['UPLOAD_FOLDER'], filename+'.wav')
+    path_to_audio = app.config['UPLOAD_FOLDER'] + filename + '.wav'
     flash("System working on sheet generation...")
     subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
-    flash("Succesfuly!")
+    flash("Succesful!")
     
     # Copy generated sheets to static folder
     png_files = []
@@ -105,6 +109,25 @@ def upload_file_youtube():
             png_files.append(destin.replace("app/",""))
     
     return render_template("service.html", filename=filename, app_data=app_data, png_files=png_files)
+
+@app.route('/tracks_volume', methods=['POST'])
+def tracks_volume():
+    filename = request.form['filename']
+    path_to_audio = app.config['UPLOAD_FOLDER'] + filename
+    path_to_audios_separated = path_to_audio.replace("audio/","separated/")
+
+    audio_files = []
+    destin_folder = app.config['WAV_FOLDER'] + filename + "/"
+    if not os.path.exists(destin_folder):
+        os.makedirs(destin_folder)
+    for f in os.listdir(path_to_audios_separated):
+        if f.endswith('.wav'):
+            destin = destin_folder + f
+            shutil.copyfile(path_to_audios_separated+"/"+f, destin)
+            audio_files.append(destin.replace("app/",""))
+
+    audio_files = [file.replace("app/","") for file in audio_files]
+    return render_template("service.html", app_data=app_data, audio_files=audio_files)
 
 if __name__ == "__main__":
     app.run(debug=DEVELOPMENT_ENV)

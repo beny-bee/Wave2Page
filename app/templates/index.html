@@ -6,12 +6,10 @@
     <span>
       <h1 class="display-4">{{ app_data['html_title'] }}</h1>
       <h5>by {{ app_data['author'] }}</h5>
-    </span> 
-    
-    <p class="lead"></p>
+    </span>
 
     <hr class="my-4">
-    <p>Click here!</p>
+
     <form class="btn btn-primary btn-lg" method="POST" action="/upload" enctype="multipart/form-data">
       <input type="file" name="file">
       <input type="submit" value="Upload">

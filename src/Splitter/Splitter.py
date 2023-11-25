@@ -18,6 +18,8 @@ class AudioSplitter:
         for stem, source in separated.items():
             output_path = os.path.join(output_audio_path, f'{stem}.wav')
             demucs.api.save_audio(source, output_path, samplerate=self.separator.samplerate)
+            if stem == "other":
+                output_path_others = output_path
             
         origin, separated = self.separator.separate_audio_file(output_path_others)
         for stem, source in separated.items():
