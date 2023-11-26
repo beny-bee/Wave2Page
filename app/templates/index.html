@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% set active_page = "home" %}
 
+
 {% block body %}
 <div class="jumbotron">
     <span>
@@ -10,22 +11,65 @@
 
     <hr class="my-4">
 
-    <form class="btn btn-primary btn-lg" method="POST" action="/upload" enctype="multipart/form-data">
-      <input type="file" name="file">
-      <input type="submit" value="Upload">
-    </form>
+    <div class="parent">
+      <form id="form_upload" class="btn btn-primary btn-lg child" method="POST" action="/upload" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input id="upload_button" type="submit" value="Upload" onclick="loading();">
+      </form>
+    </div>
+
+    <div id="loader">
+      <h5>Loading...</h5>
+    </div>
 
     {% if filename%}
         <p>The file '{{ filename }}' was successfully uploaded.</p>
 
         {% for image in png_files %}
-            <li>
-                <img src="{{image}}" alt="{{image}}" height="1000">
-            </li>
+          <img src="{{image}}" alt="{{image}}" height="1000">
         {% endfor %}
         
     {% endif %}
 
-    <!-- <a class="btn btn-primary btn-lg" href="/contact" role="button">Contact</a> -->
+    <style>
+      div#loader {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: none;
+        animation: spin 2s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .parent_center {
+        margin: 1rem;
+        padding: 2rem 2rem;
+        text-align: center;
+      }
+      .parent {
+        margin: 1rem;
+        padding: 2rem 2rem;
+        text-align: left;
+      }
+      .child {
+        display: inline-block;
+        padding: 1rem 1rem;
+        vertical-align: middle;
+      }
+      
+    </style>
+
+    <script type="text/javascript">
+      function loading(){
+          $("#loader").show();  
+      }
+    </script>
+
   </div>
 {% endblock %}
