@@ -7,3 +7,4 @@ librosa
 flask
 music21
 pytube
+denoiser
