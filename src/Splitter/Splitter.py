@@ -23,10 +23,10 @@ class AudioSplitter:
             output_path = os.path.join(output_audio_path, f'{stem}.wav')
             if stem == 'vocals':
                 print('Improving vocals...')
-                improved = convert_audio(source, self.separator.samplerate, self.denoiser.sample_rate, self.denoiser.chin)
+                improved = convert_audio(source, self.karaoke_separator.samplerate, self.denoiser.sample_rate, self.denoiser.chin)
                 with torch.no_grad():
-                    improved = self.separator(improved[None])[0]
-                demucs.api.save_audio(improved, output_path, samplerate=self.denoiser.samplerate)
+                    improved = self.denoiser(improved[None])[0]
+                demucs.api.save_audio(improved, output_path, samplerate=self.denoiser.sample_rate)
             else:
                 demucs.api.save_audio(source, output_path, samplerate=self.separator.samplerate)
             if stem == "other":
