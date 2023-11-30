@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+    "name": "Wave2Page - Youtube",
+    "version": "1.0.0",
+    "permissions": ["storage", "activeTab", "tabs"],
+    "background": {
+      "scripts": ["scripts/save_redirect.js"],
+      "persistent": false
+    }, 
+    "content_scripts": [
+        {
+          "js": ["scripts/insert_url.js"],
+          "matches": ["http://127.0.0.1:5000/service*"]
+        }
+      ],
+      "browser_action": {
+        "default_popup": "templates/popup.html"
+    }
+  }
