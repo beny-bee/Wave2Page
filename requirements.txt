@@ -8,4 +8,5 @@ flask
 music21
 pytube
 denoiser
-omegaconf==2.3.0
+OmegaConf==2.3.0
+unidecode

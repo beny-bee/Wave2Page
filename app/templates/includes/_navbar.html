@@ -16,11 +16,26 @@
     height: 8px;
     background-color: blue;
     border-radius: 50%;
+  }
+  .navbar-brand {
+    padding-left: 0; /* Adjust or remove padding as needed */
+    margin-left: 0; /* Adjust or remove margin as needed */
+    display: flex; /* Enables flexbox */
+    align-items: center; /* Aligns items vertically in the center */
+    justify-content: center; /* Centers items horizontally */
+    gap: 10px; /* Optional: Adjusts space between logo and title */
 }
+  .logo_nav {
+      height: 35px; /* Fixed height */
+      width: auto; /* Width auto to maintain aspect ratio */
+  }
 </style>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
   <div class="container">
-    <a class="navbar-brand" href="/">{{app_data['project_name']}}</a>
+    <a class="navbar-brand" href="/">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Wave2Page Logo" class="logo_nav">
+      {{app_data['project_name']}}
+    </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>

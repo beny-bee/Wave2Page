@@ -1,23 +1,56 @@
 body {
-    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 10px;
-    text-align: center;
-    background-color: #f8f8f8;
-}
-#testButton {
-    background-color: #0056b3;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-h1 {
     color: #333;
-    font-size: 18px;
+    background-color: #f7f7f7;
+}
+.popup-container {
+    border: 2px solid blue;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #fff;
+}
+.popup-header {
+    color: blue;
+    margin: 0;
+    margin-bottom: 10px;
+}
+.popup-instructions {
+    margin: 0;
+    margin-bottom: 20px;
+}
+.shazam-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    background-color: blue;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+.shazam-button:disabled {
+    background-color: #cccccc; /* Light gray background */
+    color: #666666; /* Darker text color */
+    cursor: not-allowed; /* Cursor indicates the button is not clickable */
+    /* Add any other styles you want for the disabled state */
+}
+.contact-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: 2px solid blue;
+    border-radius: 5px;
+    color: blue;
+    background-color: transparent;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    text-transform: uppercase;
+    text-decoration: none;
 }

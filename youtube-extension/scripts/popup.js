@@ -1,5 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('testButton').addEventListener('click', function() {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        const currentTab = tabs[0];
+        const isYoutubeVideo = currentTab.url.includes('youtube.com/watch');
+        
+        if (!isYoutubeVideo) {
+            document.getElementById('testButton').disabled = true;
+            document.getElementById('error-message').style.display = 'block';
+        }
+    });
+    document.getElementById('testButton').addEventListener('click', function () {
         console.log("Button clicked");
         // Send message to background script
         chrome.runtime.sendMessage({ action: "processCurrentTab" }, function(response) {
@@ -10,5 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         window.close();
+    });
+    const contactButton = document.getElementById('contactButton');
+
+    contactButton.addEventListener('click', function() {
+        chrome.tabs.create({'url': 'http://127.0.0.1:5000/contact'}); // Replace with your desired URL
     });
 });

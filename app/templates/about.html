@@ -2,6 +2,38 @@
 {% set active_page = "about" %}
 
 {% block body %}
-    <h1>{{ app_data['description'] }}</h1>
-    <h2>About page</h2>
+<style>
+.project-info {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex; /* Changed to flexbox */
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.project-description {
+    flex: 1; /* Takes up available space */
+    padding-right: 5px; /* Space between text and logo */
+}
+.logo {
+    max-width: 15%; /* Adjust this value to set the maximum width */
+    max-height: 15%; /* This will make sure the height is not more than the container's height */
+    display: block;
+    width: auto;  /* Adjusts the width to maintain aspect ratio */
+    height: auto; /* Adjusts the height to maintain aspect ratio */
+}
+</style>
+<div class="project-info">
+    <div class="project-description">
+        <h2>Welcome to Wave2Page</h2>
+        <p>
+            Wave2Page is an innovative project initiated by students of UPC, focusing on converting music into sheet notation and offering various audio services based on AI technology. Our mission is to bridge the gap between audio and musical notation, making it easier for musicians and enthusiasts to transcribe and understand music. We leverage the latest AI advancements to provide accurate and efficient services.
+        </p>
+    </div>
+    <div class="logo-container"></div>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Wave2Page Logo" class="logo">
+    </div>
+</div>
 {% endblock %}

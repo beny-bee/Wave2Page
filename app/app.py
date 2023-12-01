@@ -91,13 +91,14 @@ def upload_file():
 def upload_file_youtube():
     video_url = request.form['video_url']
     filename = request.form['filename']
-    ys.YoutubeAudioDownload(video_url, filename, app.config['UPLOAD_FOLDER'])
+    title = ys.YoutubeAudioDownload(video_url, filename, app.config['UPLOAD_FOLDER'])
     flash("Succesfuly dowloaded audio from youtube!")  # Flashing the success or error message
     
-    path_to_audio = app.config['UPLOAD_FOLDER'] + filename + '.wav'
+    path_to_audio = app.config['UPLOAD_FOLDER'] + title + '.wav'
+    print('PATH:', path_to_audio)
     flash("System working on sheet generation...")
     subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
-    flash("Succesful!")
+    flash(title+" - Succesful!")
     
     # Copy generated sheets to static folder
     png_files = []

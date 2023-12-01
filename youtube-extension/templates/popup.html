@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wave2Page - Youtube</title>
     <link rel="stylesheet" type="text/css" href="../css/popup.css">
+
 </head>
 <body>
-    <h1>Wave2Page - Youtube</h1>
-    <button id="testButton">Process YouTube Video</button>
-    <script src="../scripts/popup.js"></script>
+
+    <div class="popup-container">
+        <h1 class="popup-header">Wave2Page</h1>
+        <p class="popup-instructions">Transform any song from youtube with a single click.</p>
+        <button id="testButton" class="shazam-button">Go</button>
+        <script src="../scripts/popup.js"></script>
+        <button class="contact-button" id="contactButton">Contact</button>
+        <p id="error-message" style="color: red; display: none;">Error: Not a YouTube video page.</p>
+    </div>
+    
 </body>
 </html>
