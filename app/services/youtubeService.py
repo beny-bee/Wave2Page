@@ -3,7 +3,7 @@ from pytube import YouTube
 from unidecode import unidecode
 import re
 
-def YoutubeAudioDownload(video_url, filename, path):
+def YoutubeAudioDownload(video_url, path):
     video = YouTube(video_url)
     audio = video.streams.filter(only_audio = True).first()
     title = postprocess_title(video.title)

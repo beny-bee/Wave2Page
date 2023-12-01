@@ -90,8 +90,7 @@ def upload_file():
 @app.route('/upload_file_youtube', methods=['POST'])
 def upload_file_youtube():
     video_url = request.form['video_url']
-    filename = request.form['filename']
-    title = ys.YoutubeAudioDownload(video_url, filename, app.config['UPLOAD_FOLDER'])
+    title = ys.YoutubeAudioDownload(video_url, app.config['UPLOAD_FOLDER'])
     flash("Succesfuly dowloaded audio from youtube!")  # Flashing the success or error message
     
     path_to_audio = app.config['UPLOAD_FOLDER'] + title + '.wav'
