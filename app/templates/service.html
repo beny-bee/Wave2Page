@@ -1,6 +1,11 @@
 {% extends 'layout.html' %}
 {% set active_page = "service" %}
-    
+ 
+
+{% block head %}
+<!-- Include Google Material Icons -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+{% endblock %}
 {% block body %}
     <style>
             
@@ -48,15 +53,20 @@
             margin: 1rem;
             padding: 2rem 2rem;
             text-align: center;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
         .parent {
             margin: 1rem;
             padding: 2rem 2rem;
         }
         .child {
-            display: inline-block;
-            padding: 1rem 1rem;
-            vertical-align: middle;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
         }
         h2:nth-of-type(2) {
             margin-top: 30px; /* This adds space only above the second h2 element */
@@ -73,6 +83,53 @@
     
         .custom-button:hover {
             background-color: #0056b3;
+        }
+        .download-button {
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background-color: #007bff; /* Match the color with .custom-button */
+            color: white; /* Text color */
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            display: inline-block; 
+        }
+        .download-button:hover {
+            background-color: #0056b3; /* Hover effect to match .custom-button */
+        }
+        .download-button img {
+            width: 20px; /* Adjust the size of the icon as needed */
+            height: auto;
+            filter: brightness(0) invert(1);
+            text-align: center;
+        }
+        input[type="range"] {
+            width: 40%; /* Adjust this value to control the width */
+            margin: 0 5px; /* Adjust margin for proper alignment */
+            padding: 0; /* Adjust padding if needed */
+        }
+        .volume-slider {
+            display: flex;
+            width: 100%; /* This makes the slider take up the full width of its container */
+            margin: 0 10px; /* Adjust margins as needed */
+            text-align: center;
+        }
+        .label-container {
+            display: flex;
+            width: 100px; /* Adjust this width to fit your longest label */
+            text-align: center; /* This ensures the labels are right-aligned */
+        }
+        .slider-and-button {
+            display: flex;
+            align-items: center;
+            flex-grow: 1; /* This makes the slider and button fill the rest of the container */
+            text-align: center;
         }
     </style>
     <!-- Youtube service -->
@@ -128,11 +185,20 @@
         <div id="audioContainer" class="parent_center">
         {% for audio_file in audio_files %}
             <div class="child">
-            <h5>{{(audio_file.split('/')[-1].split('.')[0]).capitalize()}}</h5>
-            <audio src="{{ audio_file }}">
-                <a href="{{ audio_file }}"></a>
-            </audio>
-            <input type="range" min="0" max="1" step="0.01" value="100" oninput="changeVolume(this, '{{ audio_file }}')">
+                <div class="label-container">
+                    <h5>{{(audio_file.split('/')[-1].split('.')[0]).capitalize()}}</h5>
+                </div>
+                <div class="slider-and-button">
+                    <audio src="{{ audio_file }}">
+                        <a href="{{ audio_file }}"></a>
+                    </audio>
+                    <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="100" oninput="changeVolume(this, '{{ audio_file }}')">
+                    <a href="{{ audio_file }}" download="{{ audio_file.split('/')[-1] }}">
+                        <button class="download-button">
+                            <img src="{{ url_for('static', filename='icons/download_icon.svg') }}" alt="Download">
+                        </button>
+                    </a>
+                </div>
             </div>
         {% endfor %}
             <div class="parent_center">
