@@ -50,23 +50,32 @@
             margin-bottom: 20px;
         }
         .parent_center {
-            margin: 1rem;
+            margin: 0rem;
             padding: 2rem 2rem;
             text-align: center;
             justify-content: center;
             align-items: center;
             width: 100%;
+            display: flex;
+        }
+        .in_columns {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
         }
         .parent {
             margin: 1rem;
             padding: 2rem 2rem;
         }
         .child {
-            display: flex;
+            display: inline-block;
             justify-content: center;
             align-items: center;
             text-align: center;
-            gap: 10px;
+            gap: 2px;
+            vertical-align: middle;
         }
         h2:nth-of-type(2) {
             margin-top: 30px; /* This adds space only above the second h2 element */
@@ -110,25 +119,25 @@
             text-align: center;
         }
         input[type="range"] {
-            width: 40%; /* Adjust this value to control the width */
+            width: 100%; /* Adjust this value to control the width */
             margin: 0 5px; /* Adjust margin for proper alignment */
             padding: 0; /* Adjust padding if needed */
         }
-        .volume-slider {
+        /* .volume-slider {
             display: flex;
-            width: 100%; /* This makes the slider take up the full width of its container */
-            margin: 0 10px; /* Adjust margins as needed */
+            width: 100%; /* This makes the slider take up the full width of its container 
+            margin: 0 10px; /* Adjust margins as needed 
             text-align: center;
-        }
+        } */
         .label-container {
             display: flex;
             width: 100px; /* Adjust this width to fit your longest label */
-            text-align: center; /* This ensures the labels are right-aligned */
+            text-align: right; /* This ensures the labels are right-aligned */
         }
         .slider-and-button {
             display: flex;
             align-items: center;
-            flex-grow: 1; /* This makes the slider and button fill the rest of the container */
+            /*flex-grow: 1; /* This makes the slider and button fill the rest of the container */
             text-align: center;
         }
     </style>
@@ -136,11 +145,16 @@
     <h2>YouTube</h2>
 
     <form id="Youtube_download" action="/upload_file_youtube" method="post">
+        <h5>Use a YouTube audio to start the process</h5>
         <div class="form-group">
             <label for="video_url">YouTube URL:</label>
             <input type="text" id="video_url" name="video_url">
         </div>
-        <input id="submitButtonYT" type="submit" value="Use">
+        <div class="form-group">
+            <label for="filename">Filename:</label>
+            <input type="text" id="filename" name="filename">
+        </div>
+        <input id="submitButtonYT" type="submit" value="Convert">
     </form>
 
     {% with messages = get_flashed_messages() %}
@@ -174,38 +188,52 @@
     </script>
 
     <form id="volume" action="/tracks_volume" method="post">
-        <div class="form-group">
-            <label for="filename">Filename:</label>
-            <input type="text" id="filename" name="filename">
-        </div>
+        <h5>Select an already processed audio</h5>
+        <select name="select" id="filename">
+            {% for audio in audios_available %}
+                <option id="filename"value={{audio}}>{{audio}}</option>
+            {% endfor %}
+        </select>
         <input type="submit" value="Use">
     </form>
 
     {% if audio_files%}
-        <div id="audioContainer" class="parent_center">
-        {% for audio_file in audio_files %}
+        <div class="in_columns">
             <div class="child">
-                <div class="label-container">
-                    <h5>{{(audio_file.split('/')[-1].split('.')[0]).capitalize()}}</h5>
-                </div>
-                <div class="slider-and-button">
-                    <audio src="{{ audio_file }}">
-                        <a href="{{ audio_file }}"></a>
-                    </audio>
-                    <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="100" oninput="changeVolume(this, '{{ audio_file }}')">
-                    <a href="{{ audio_file }}" download="{{ audio_file.split('/')[-1] }}">
-                        <button class="download-button">
-                            <img src="{{ url_for('static', filename='icons/download_icon.svg') }}" alt="Download">
-                        </button>
-                    </a>
+                <div id="audioContainer" class="parent_center">
+                {% for audio_file in audio_files %}
+                    <div class="in_columns">
+                        <div class="child">
+                            <div class="label-container">
+                                <h5>{{(audio_file.split('/')[-1].split('.')[0]).capitalize()}}</h5>
+                            </div>
+                        </div>
+                        <div class="child">
+                            <audio src="{{ audio_file }}">
+                                <a href="{{ audio_file }}"></a>
+                            </audio>
+                            <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="100" oninput="changeVolume(this, '{{ audio_file }}')">
+                        </div>
+                        <div class="child">
+                            <a href="{{ audio_file }}" download="{{ audio_file.split('/')[-1] }}">
+                                <button class="download-button">
+                                    <img src="{{ url_for('static', filename='icons/download_icon.svg') }}" alt="Download">
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
                 </div>
             </div>
-        {% endfor %}
-            <div class="parent_center">
-                <button class="custom-button" onclick="playPauseAll()">Play/Pause</button>
-                <button class="custom-button" onclick="resetAll()">Reset</button>
+            <div class="child">
+                <div class="parent_center">
+                    <button class="custom-button" onclick="playPauseAll()">Play/Pause</button>
+                    <button class="custom-button" onclick="resetAll()">Reset</button>
+                </div>
             </div>
         </div>
+        
+        
 
         <script>
             function playPauseAll() {

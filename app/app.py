@@ -47,7 +47,8 @@ def about():
 
 @app.route("/service")
 def service():
-    return render_template("service.html", app_data=app_data)
+    audios_available = [f.split(".")[0] for f in os.listdir(app.config['UPLOAD_FOLDER'])]
+    return render_template("service.html", app_data=app_data, audios_available=audios_available)
 
 @app.route("/contact")
 def contact():
@@ -90,14 +91,20 @@ def upload_file():
 @app.route('/upload_file_youtube', methods=['POST'])
 def upload_file_youtube():
     video_url = request.form['video_url']
+    filename = request.form['filename']
+
     title = ys.YoutubeAudioDownload(video_url, app.config['UPLOAD_FOLDER'])
+    
     flash("Succesfuly dowloaded audio from youtube!")  # Flashing the success or error message
     
-    path_to_audio = app.config['UPLOAD_FOLDER'] + title + '.wav'
-    print('PATH:', path_to_audio)
+    path_to_audio_long = app.config['UPLOAD_FOLDER']+title+'.wav'
+    path_to_audio = app.config['UPLOAD_FOLDER'] + filename + '.wav'
+    shutil.copyfile(path_to_audio_long, path_to_audio)
+    os.remove(path_to_audio_long)
+    
     flash("System working on sheet generation...")
     subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
-    flash(title+" - Succesful!")
+    flash(filename+" - Succesful!")
     
     # Copy generated sheets to static folder
     png_files = []
@@ -108,11 +115,12 @@ def upload_file_youtube():
             shutil.copyfile(origin+"/"+f, destin)
             png_files.append(destin.replace("app/",""))
     
-    return render_template("service.html", filename=filename, app_data=app_data, png_files=png_files)
+    audios_available = [f.split(".")[0] for f in os.listdir(app.config['UPLOAD_FOLDER'])]
+    return render_template("service.html", filename=filename, app_data=app_data, png_files=png_files, audios_available=audios_available)
 
 @app.route('/tracks_volume', methods=['POST'])
 def tracks_volume():
-    filename = request.form['filename']
+    filename = request.form['select']
     path_to_audio = app.config['UPLOAD_FOLDER'] + filename
     path_to_audios_separated = path_to_audio.replace("audio/","separated/")
 
@@ -127,7 +135,8 @@ def tracks_volume():
             audio_files.append(destin.replace("app/",""))
 
     audio_files = [file.replace("app/","") for file in audio_files]
-    return render_template("service.html", app_data=app_data, audio_files=audio_files)
+    audios_available = [f.split(".")[0] for f in os.listdir(app.config['UPLOAD_FOLDER'])]
+    return render_template("service.html", app_data=app_data, audio_files=audio_files, audios_available=audios_available)
 
 if __name__ == "__main__":
     app.run(debug=DEVELOPMENT_ENV)
