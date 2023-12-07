@@ -2,6 +2,7 @@ import os
 import warnings
 import partitura as pt
 import subprocess
+import music21
 
 #warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -16,18 +17,24 @@ import subprocess
 #         print(f"Done {i+1}/{len(score.parts)}", end="\r")
 
 
-def midi2Sheet(input_path, output_path, SEPARATOR, mode="pdf"):
-    assert mode in ["pdf", "png"], "mode must be pdf or png"
-    
+def midi2Sheet(input_path, output_path, SEPARATOR):
     # Create the output directory if it doesn't exists
     os.makedirs(output_path, exist_ok=True)
     
     # On Windows, the command might be r"C:\Program Files\MuseScore 4\bin\MuseScore4.exe"
     musescore_command = pt.io.musescore.find_musescore() #"mscore" for benja
     
-    sheetName = output_path.split(SEPARATOR)[-2]
     # Define the output path for the sheet music
-    outPath = f"{output_path}{SEPARATOR}{sheetName}.{mode}"
+    sheetName = output_path.split(SEPARATOR)[-2]
+    outPathNoExtension = f"{output_path}{SEPARATOR}{sheetName}."
+    outPath = outPathNoExtension+"musicxml"
+    
+    # Run MuseScore to convert the MIDI file to musicxml
+    subprocess.run([musescore_command, input_path, "-o", outPath])
+    
+    # Apply changes to musicxml
+    
     
     # Run MuseScore to convert the MIDI file to sheet music
-    subprocess.run([musescore_command, input_path, "-o", outPath]) #"--score-mp3"
+    subprocess.run([musescore_command, outPath, "-o", outPathNoExtension+"pdf"])
+    subprocess.run([musescore_command, outPath, "-o", outPathNoExtension+"png"])

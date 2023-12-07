@@ -60,7 +60,7 @@ def convert_audio_to_midi(input_path, output_path, tempo):
 
 def convert_midi_to_sheet(input_path, output_path):
     print(f'Converting {input_path} to sheet music...\n Output will be saved to {output_path} directory')
-    midi2Sheet.midi2Sheet(f"{input_path}{SEPARATOR}combined.mid", output_path, SEPARATOR, mode="png")
+    midi2Sheet.midi2Sheet(f"{input_path}{SEPARATOR}combined.mid", output_path, SEPARATOR)
 
 def main():
     parser = argparse.ArgumentParser(description='Process audio and midi files to generate music sheeets.')
