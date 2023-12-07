@@ -27,12 +27,12 @@ def convert_audio_to_midi(input_audio_path, output_directory, tempo):
 
 def combine_midi_files(midi_files, output_path, instruments, tempo):
     # Create a new MIDI file to store the combined tracks
-    combined_midi = MidiFile(ticks_per_beat=220)
+    combined_midi = MidiFile(ticks_per_beat=tempo)
 
     for midi_file_path, instrument in zip(midi_files, instruments):
         midi_file = MidiFile(midi_file_path)
         
-        # Revise this
+        # Revise this       
         track = midi_file.tracks[1]
         time_signature_msg = None
         for msg in midi_file.tracks[0]:

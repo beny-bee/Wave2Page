@@ -59,7 +59,8 @@ def convert_audio_to_midi(input_path, output_path, tempo):
             
 
 def convert_midi_to_sheet(input_path, output_path):
-    print(f'Converting {input_path} to sheet music...\n Output will be saved to {output_path} directory')
+    output_path = output_path if output_path[-1] == SEPARATOR else output_path + SEPARATOR
+    print(f'Converting {input_path} to sheet music...\nOutput will be saved to {output_path} directory')
     midi2Sheet.midi2Sheet(f"{input_path}{SEPARATOR}combined.mid", output_path, SEPARATOR)
 
 def main():
@@ -109,7 +110,10 @@ def main():
     if args.midi2sheet:
         output_path = input_path_original.replace(f"data{SEPARATOR}midi",f"data{SEPARATOR}sheet").replace(".wav","")
         if args.separate:
-            input_path = input_path.replace(f"data{SEPARATOR}audio",f"data{SEPARATOR}midi")
+            if not args.wav2midi:
+                input_path = input_path.replace(f"data{SEPARATOR}audio",f"data{SEPARATOR}midi")
+            else:
+                input_path = input_path.replace(f"data{SEPARATOR}separated",f"data{SEPARATOR}midi")
             output_path = input_path_original.replace(f"data{SEPARATOR}audio",f"data{SEPARATOR}sheet").replace(".wav","")
         elif args.wav2midi:
             input_path = input_path.replace(f"data{SEPARATOR}separated",f"data{SEPARATOR}midi")

@@ -10,3 +10,5 @@ pytube
 denoiser
 OmegaConf==2.3.0
 unidecode
+PyPDF2
+reportlab
