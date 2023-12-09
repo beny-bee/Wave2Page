@@ -15,7 +15,7 @@
       <form id="form_upload" class="form-group" method="POST" action="/upload" enctype="multipart/form-data">
         <input type="file" name="file" class="form-control">
         <input id="upload_button" type="submit" class="custom-button" value="Upload" onclick="loading();">
-    </form>
+      </form>
     </div>
 
     <div id="loader"></div>
@@ -75,42 +75,42 @@
         cursor: pointer;
         font-size: 16px; /* Adjust as needed */
         line-height: 1.5; /* Adjust as needed */
-    }
+      }
     
-    input[type="file"] {
-        font-size: 16px; /* Match the button's font-size */
-        line-height: 1.5; /* Match the button's line-height */
-        padding: 10px 20px; /* Match the button's padding */
-        border-radius: 4px; /* Match the button's border-radius */
-        border: 1px solid #ddd; /* Optional: if you want to match the button's border */
-        margin-right: 8px; /* Optional: to give some space between the file input and the button */
-        height: auto; /* To ensure the natural height based on padding and font size */
-        -webkit-appearance: none; /* Removes the default styling on Webkit browsers */
-        -moz-appearance: none; /* Removes the default styling on Firefox */
-        appearance: none; /* Removes the default styling */
-    }
+      input[type="file"] {
+          font-size: 16px; /* Match the button's font-size */
+          line-height: 1.5; /* Match the button's line-height */
+          padding: 10px 20px; /* Match the button's padding */
+          border-radius: 4px; /* Match the button's border-radius */
+          border: 1px solid #ddd; /* Optional: if you want to match the button's border */
+          margin-right: 8px; /* Optional: to give some space between the file input and the button */
+          height: auto; /* To ensure the natural height based on padding and font size */
+          -webkit-appearance: none; /* Removes the default styling on Webkit browsers */
+          -moz-appearance: none; /* Removes the default styling on Firefox */
+          appearance: none; /* Removes the default styling */
+      }
     
-    /* Style adjustments for the file input to visually match the button */
-    input[type="file"]::-webkit-file-upload-button {
-        background-color: #007bff;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        line-height: 1.5;
-    }
-    
-    .form-group {
-        display: flex;
-        align-items: center;
-    }
-    
-    /* If you want to vertically center everything in case of line-height differences */
-    .form-group * {
-        vertical-align: middle;
-    }
+      /* Style adjustments for the file input to visually match the button */
+      input[type="file"]::-webkit-file-upload-button {
+          background-color: #007bff;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 4px;
+          border: none;
+          cursor: pointer;
+          font-size: 16px;
+          line-height: 1.5;
+      }
+      
+      .form-group {
+          display: flex;
+          align-items: center;
+      }
+      
+      /* If you want to vertically center everything in case of line-height differences */
+      .form-group * {
+          vertical-align: middle;
+      }
         
     </style>
 

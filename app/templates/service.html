@@ -140,7 +140,22 @@
             /*flex-grow: 1; /* This makes the slider and button fill the rest of the container */
             text-align: center;
         }
+        div#loaderMidi {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: none;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
+
     <!-- Youtube service -->
     <h2>YouTube</h2>
 
@@ -233,8 +248,6 @@
             </div>
         </div>
         
-        
-
         <script>
             function playPauseAll() {
                 console.log("Playing/Pausing all...")
@@ -256,6 +269,78 @@
             }
         </script>
     {% endif %}
+
+    &nbsp
+
+    <!-- Service audio to midi -->
+    <h2>Audio to MIDI</h2>
+
+    <style>
+        input[type="file"] {
+          font-size: 16px; /* Match the button's font-size */
+          line-height: 1.5; /* Match the button's line-height */
+          padding: 10px 20px; /* Match the button's padding */
+          border-radius: 4px; /* Match the button's border-radius */
+          border: 1px solid #ddd; /* Optional: if you want to match the button's border */
+          margin-right: 8px; /* Optional: to give some space between the file input and the button */
+          height: auto; /* To ensure the natural height based on padding and font size */
+          -webkit-appearance: none; /* Removes the default styling on Webkit browsers */
+          -moz-appearance: none; /* Removes the default styling on Firefox */
+          appearance: none; /* Removes the default styling */
+        }
+        
+        /* Style adjustments for the file input to visually match the button */
+        input[type="file"]::-webkit-file-upload-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .form-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        /* If you want to vertically center everything in case of line-height differences */
+        .form-group * {
+            vertical-align: middle;
+        }
+    </style>
+
+    <form id="audio_to_midi" action="/audio_to_midi" method="post" enctype="multipart/form-data">
+        <h5>Upload the audio that you want to convert to MIDI</h5>
+        <div class="form-group">
+            <input type="file" name="file" class="form-control">
+            <input id="upload_button" type="submit" class="custom-button" value="Convert" onclick="loading('#loaderMidi');">
+        </div>
+    </form>
+    {% if to_midi %}
+    <div class="form-group">
+        <div class="child">
+            <h5>Download your audio</h5>
+            <a href="{{ to_midi }}" download="{{ to_midi.split('/')[-1] }}">
+                <button class="download-button">
+                    <img src="{{ url_for('static', filename='icons/download_icon.svg') }}" alt="Download">
+                </button>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    &nbsp
+
+    <div id="loaderMidi"></div>
+
+    <script type="text/javascript">
+        function loading(name){
+            $(name).show();  
+        }
+    </script>
 
 </body>
 </html>

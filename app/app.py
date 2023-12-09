@@ -33,6 +33,10 @@ app.config['PNG_FOLDER'] = 'app/static/images/'
 if not os.path.exists(app.config['PNG_FOLDER']):
     os.makedirs(app.config['PNG_FOLDER'])
 
+app.config['MIDI_FOLDER'] = 'app/static/midi/'
+if not os.path.exists(app.config['MIDI_FOLDER']):
+    os.makedirs(app.config['MIDI_FOLDER'])
+
 app.config['WAV_FOLDER'] = 'app/static/audio/'
 if not os.path.exists(app.config['WAV_FOLDER']):
     os.makedirs(app.config['WAV_FOLDER'])
@@ -137,6 +141,35 @@ def tracks_volume():
     audio_files = [file.replace("app/","") for file in audio_files]
     audios_available = [f.split(".")[0] for f in os.listdir(app.config['UPLOAD_FOLDER'])]
     return render_template("service.html", app_data=app_data, audio_files=audio_files, audios_available=audios_available)
+
+@app.route('/audio_to_midi', methods=['POST'])
+def audio_to_midi():
+    if 'file' not in request.files:
+        return redirect(request.url)
+    file = request.files['file']
+    filename = file.filename
+
+    if file and filename.endswith('.wav'):
+        # Save the uploaded file to the upload folder
+        path_to_audio = app.config['UPLOAD_FOLDER'] + filename
+        file.save(path_to_audio)
+
+        print("Calling python code")
+        subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi"])
+
+        path_to_midi = app.config['UPLOAD_FOLDER'].replace("/audio","/midi") + filename.split(".")[0] + "/combined.mid"
+        path_to_destin = app.config['MIDI_FOLDER'] + filename.split(".")[0]
+        if not os.path.exists(path_to_destin):
+            os.makedirs(path_to_destin)
+        path_to_destin = path_to_destin + "/combined.mid"
+        shutil.copyfile(path_to_midi, path_to_destin)
+        path_to_destin = path_to_destin.replace("app/","")
+
+    else:
+        return 'Invalid file format. Please upload a .wav file.'
+    
+    audios_available = [f.split(".")[0] for f in os.listdir(app.config['UPLOAD_FOLDER'])]
+    return render_template("service.html", app_data=app_data, audios_available=audios_available, to_midi=path_to_destin)
 
 if __name__ == "__main__":
     app.run(debug=DEVELOPMENT_ENV)
