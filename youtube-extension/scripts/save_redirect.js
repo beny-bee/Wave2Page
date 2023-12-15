@@ -10,6 +10,17 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
             // Check if it's a YouTube video URL
             if (activeTabUrl.includes("youtube.com/")) {
+
+                if (message.filename) {
+                    console.log('Filename: ' + message.filename);
+                    // Store the filename in Chrome storage
+                    chrome.storage.local.set({ 'filename': message.filename }, function() {
+                        console.log('Filename is saved in storage.');
+                    });
+                } else {
+                    console.log('No filename entered');
+                }
+
                 console.log("YouTube URL detected:", activeTabUrl);
                     // Store the URL
                 chrome.storage.local.set({ 'youtubeURL': activeTabUrl }, function() {

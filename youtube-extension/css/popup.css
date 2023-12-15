@@ -4,21 +4,35 @@ body {
     color: #333;
     background-color: #f7f7f7;
 }
+
 .popup-container {
     border: 2px solid blue;
     border-radius: 5px;
     padding: 15px;
     background-color: #fff;
 }
+
 .popup-header {
     color: blue;
     margin: 0;
     margin-bottom: 10px;
 }
+
 .popup-instructions {
     margin: 0;
     margin-bottom: 20px;
 }
+
+.filename-input {
+    display: block;
+    width: calc(100% - 20px); /* Adjusted for padding */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 2px solid blue;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
 .shazam-button {
     display: block;
     width: 100%;
@@ -34,12 +48,13 @@ body {
     text-transform: uppercase;
     text-decoration: none;
 }
+
 .shazam-button:disabled {
-    background-color: #cccccc; /* Light gray background */
-    color: #666666; /* Darker text color */
-    cursor: not-allowed; /* Cursor indicates the button is not clickable */
-    /* Add any other styles you want for the disabled state */
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
 }
+
 .contact-button {
     display: block;
     width: 100%;

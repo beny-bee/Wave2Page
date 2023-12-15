@@ -76,7 +76,6 @@ def upload_file():
         path_to_audio = app.config['UPLOAD_FOLDER'] + filename
         file.save(path_to_audio)
 
-        print("Calling python code")
         subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
 
         # Copy generated sheets to static folder
@@ -101,12 +100,18 @@ def upload_file_youtube():
     
     flash("Succesfuly dowloaded audio from youtube!")  # Flashing the success or error message
     
-    path_to_audio_long = app.config['UPLOAD_FOLDER']+title+'.wav'
-    path_to_audio = app.config['UPLOAD_FOLDER'] + filename + '.wav'
-    shutil.copyfile(path_to_audio_long, path_to_audio)
-    os.remove(path_to_audio_long)
+    if filename != '':
+        path_to_audio_long = app.config['UPLOAD_FOLDER']+title+'.wav'
+        path_to_audio = app.config['UPLOAD_FOLDER'] + filename + '.wav'
     
+        print("Calling python code:", path_to_audio)
+        
+        shutil.copyfile(path_to_audio_long, path_to_audio)
+        os.remove(path_to_audio_long)
+    else :
+        path_to_audio = app.config['UPLOAD_FOLDER'] + title + '.wav' 
     flash("System working on sheet generation...")
+    
     subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
     flash(filename+" - Succesful!")
     

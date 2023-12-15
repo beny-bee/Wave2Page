@@ -8,10 +8,16 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('error-message').style.display = 'block';
         }
     });
+
     document.getElementById('testButton').addEventListener('click', function () {
         console.log("Button clicked");
-        // Send message to background script
-        chrome.runtime.sendMessage({ action: "processCurrentTab" }, function(response) {
+            
+        // Retrieve the filename from the input field
+        const filename = document.getElementById('filename').value;
+        console.log('Filename: ' + filename);
+
+        //Send message to background script
+        chrome.runtime.sendMessage({ action: "processCurrentTab", filename: filename }, function(response) {
             if (response) {
                 console.log("Response from background:", response);
             } else {
