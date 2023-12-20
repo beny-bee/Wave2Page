@@ -4,22 +4,28 @@ from unidecode import unidecode
 import re
 
 def YoutubeAudioDownload(video_url, path):
-    video = YouTube(video_url)
-    audio = video.streams.filter(only_audio = True).first()
-    title = postprocess_title(video.title)
-    print(title)
-
-    try:
-        out_file = audio.download(path)
-        # change to .wav
-        new_file = os.path.join(path, title+'.wav')
-        os.rename(out_file, new_file) 
-    except:
-        print("Failed to download audio")
-
-    print("Audio was downloaded successfully")
-    
-    return title
+    print("URL", video_url)
+    if (video_url != "") :
+        try:
+            video = YouTube(video_url)
+            audio = video.streams.filter(only_audio = True).first()
+            title = postprocess_title(video.title)
+            print(title)
+            out_file = audio.download(path)
+            # change to .wav
+            directory, file_name = os.path.split(out_file)
+            name, _ = os.path.splitext(file_name)
+            new_file_name = name + '.wav'
+            new_file = os.path.join(directory, new_file_name)
+            # Rename the file
+            print("Out file",out_file)
+            print("New file",new_file)
+            os.rename(out_file, new_file) 
+            print("Audio was downloaded successfully")
+        except:
+            print("Failed to download audio")
+        
+        return title
 
 def postprocess_title(title):
     # Transliterate to the nearest ASCII representation
