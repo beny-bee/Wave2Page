@@ -13,6 +13,13 @@
     margin-bottom: 20px;
 }
 
+.project-features{
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .project-description {
     flex: 1; /* Takes up available space */
     padding-right: 5px; /* Space between text and logo */
@@ -38,7 +45,7 @@ body {
 
 .wrapper {
     width: 100%;
-    height: 100vh;
+    height: 70vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -96,12 +103,14 @@ body {
 }
 
 .description p {
-    color: #b0b0ba;
-    padding-top: 5px;
+    color: white;
+    padding-top: -10px;
 }
 
 .description h4 {
+    padding-top: 12px;
     text-transform: uppercase;
+    margin-bottom: 0px;
 }
 
 input {
@@ -118,16 +127,16 @@ input:checked + label .description {
 }
 
 .card[for="c1"] {
-    background-image: url('static/logos/logo_white.png');
+    background-image: url('static/images/features/featureConversion.jpg');
 }
 .card[for="c2"] {
-    background-image: url('static/logos/logo_white.png');
+    background-image: url('static/images/features/featureServices.jpg');
 }
 .card[for="c3"] {
-    background-image: url('static/logos/logo_white.png');
+    background-image: url('static/images/features/featureQuality.jpg');
 }
 .card[for="c4"] {
-    background-image: url('static/logos/logo_white.png');
+    background-image: url('static/images/features/featureYoutube.jpg');
 }
 
 </style>
@@ -144,7 +153,7 @@ input:checked + label .description {
 </div>
 
 <!-- <div stle="height:10cm"></div> -->
-<div class="project-info">
+<div class="project-features">
     <h2>Features</h2>
     <!-- Features  -->
     <div class="wrapper">
@@ -154,9 +163,8 @@ input:checked + label .description {
                 <div class="row">
                     <div class="icon">1</div>
                     <div class="description">
-                        <h4>Winter</h4>
-                        <p>Winter has so much to offer -
-                        creative activities</p>
+                        <h4>Music sheet generator</h4>
+                        <p>Generate music sheets for your favorite songs</p>
                     </div>
                 </div>
             </label>
@@ -165,9 +173,8 @@ input:checked + label .description {
                 <div class="row">
                     <div class="icon">2</div>
                     <div class="description">
-                        <h4>Digital Technology</h4>
-                        <p>Gets better every day -
-                        stay tuned</p>
+                        <h4>Rich amount of services</h4>
+                        <p>Combine many of our unique services</p>
                     </div>
                 </div>
             </label>
@@ -176,8 +183,8 @@ input:checked + label .description {
                 <div class="row">
                     <div class="icon">3</div>
                     <div class="description">
-                        <h4>Globalization</h4>
-                        <p>Help people all over the world</p>
+                        <h4>Quality conversions</h4>
+                        <p>Obtain amazing and beautiful music sheets</p>
                     </div>
                 </div>
             </label>
@@ -186,9 +193,8 @@ input:checked + label .description {
                 <div class="row">
                     <div class="icon">4</div>
                     <div class="description">
-                        <h4>New technologies</h4>
-                        <p>Space engineering becomes
-                        more and more advanced</p>
+                        <h4>Youtube integration</h4>
+                        <p>Convert directly from Youtube with our free chrome extension</p>
                     </div>
                 </div>
             </label>
