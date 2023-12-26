@@ -6,11 +6,15 @@ import os
 
 class AudioSplitter:
 
-    def __init__(self, SEPARATOR_BAR):
+    def __init__(self, SEPARATOR_BAR, instruments=None):
         self.karaoke_separator = demucs.api.Separator(model="htdemucs", progress=True)
         self.separator = demucs.api.Separator(model="htdemucs_6s", progress=True)
         self.denoiser = pretrained.dns64()
         self.SEPARATOR_BAR = SEPARATOR_BAR
+        if isinstance(instruments, list):
+            self.instruments = instruments
+        else:
+            self.instruments = ["bass", "drums", "guitar", "other", "piano", "vocals"]
 
     def separate(self, input_audio_path, output_audio_path):
         print('Separating audio sources...')
@@ -26,9 +30,9 @@ class AudioSplitter:
                 improved = convert_audio(source, self.karaoke_separator.samplerate, self.denoiser.sample_rate, self.denoiser.chin)
                 with torch.no_grad():
                     improved = self.denoiser(improved[None])[0]
-                demucs.api.save_audio(improved, output_path, samplerate=self.denoiser.sample_rate)
+                self.saveAudio(improved, output_path, self.denoiser.sample_rate, stem)
             else:
-                demucs.api.save_audio(source, output_path, samplerate=self.separator.samplerate)
+                self.saveAudio(source, output_path, self.separator.samplerate, stem)
             if stem == "other":
                 output_path_others = output_path
             
@@ -36,7 +40,10 @@ class AudioSplitter:
         for stem, source in separated.items():
             if stem in ['piano', 'guitar', 'other']:
                 output_path = os.path.join(output_audio_path, f'{stem}.wav')
-                demucs.api.save_audio(source, output_path, samplerate=self.separator.samplerate)
+                self.saveAudio(source, output_path, self.separator.samplerate, stem)
         
         print(f"Succesfully separated audio. Results in {output_audio_path}")
-        
+
+    def saveAudio(self, source, output_path, samplerate, instrument):
+        if (instrument == "other") or (instrument in self.instruments):
+            demucs.api.save_audio(source, output_path, samplerate=samplerate)

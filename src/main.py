@@ -14,8 +14,8 @@ def get_tempo(audio_file):
     tempo, _ = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
     return tempo
 
-def separate_audio(input_path, output_path):
-    sp = AudioSplitter(SEPARATOR)
+def separate_audio(input_path, output_path, instruments):
+    sp = AudioSplitter(SEPARATOR, instruments)
     sp.separate(input_path, output_path)
 
 def convert_audio_to_midi(input_path, output_path, tempo):
@@ -37,27 +37,7 @@ def convert_audio_to_midi(input_path, output_path, tempo):
 
     midi_files = [os.path.join(output_path, midi_file) for midi_file in os.listdir(output_path)]
     wav2midi.combine_midi_files(midi_files, f'{output_path}{SEPARATOR}combined.mid', instruments, tempo)
-    
-#     aux_midi = midi.MidiFile()
-#     aux_midi.open(f'{output_directory}/combined.mid', "rb")
-#     aux_midi.read()
-#     aux_midi.close()
-#     print(aux_midi.tracks)
-#     for t in aux_midi.tracks:
-#         for e in [t.events[0]]:
-#             print(e.type)
-#     # aux_midi = midi.translate.midiFilePathToStream(f'{output_directory}/combined.mid')
-#     parts = aux_midi.parts
-#     for part,instrument in zip(parts,instruments):
-#         print(part.partName)
-#         part.partName = instrument
-#         print(part.partName)
-#     aux_midi = midi.translate.streamToMidiFile(aux_midi)
-#     aux_midi.open(f'{output_directory}/combined.mid', "wb")
-#     aux_midi.write()
-#     aux_midi.close()
-            
-
+       
 def convert_midi_to_sheet(input_path, output_path):
     output_path = output_path if output_path[-1] == SEPARATOR else output_path + SEPARATOR
     print(f'Converting {input_path} to sheet music...\nOutput will be saved to {output_path} directory')
@@ -67,12 +47,15 @@ def main():
     parser = argparse.ArgumentParser(description='Process audio and midi files to generate music sheeets.')
     parser.add_argument('input_path', type=str, help='Path of the audio for the first process. Example: python3 main.py path/to/audio.mp3')
     parser.add_argument('--separate', action='store_true', help='Separate audio into tracks')
+    parser.add_argument('--instruments', action='store', type=str, help='Instruments to be used in the separation process', required=False)
     parser.add_argument('--wav2midi', action='store_true', help='Convert audio to midi')
     parser.add_argument('--midi2sheet', action='store_true', help='Convert midi to sheet')
 
     args = parser.parse_args()
     input_path_original = args.input_path
     input_path = args.input_path
+
+    instruments = args.instruments.split(",") if args.instruments else None
 
     if args.separate:
         assert input_path_original.startswith(f"data{SEPARATOR}audio"), f"The path '{input_path_original}' when using --separate should start with data{SEPARATOR}audio"
@@ -95,7 +78,7 @@ def main():
     # Separate
     if args.separate:
         output_path = input_path_original.replace(f"data{SEPARATOR}audio",f"data{SEPARATOR}separated").replace(".wav","")
-        separate_audio(input_path, output_path)
+        separate_audio(input_path, output_path, instruments)
     
     # Wav2Midi
     if args.wav2midi:

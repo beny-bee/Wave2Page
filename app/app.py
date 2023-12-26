@@ -76,7 +76,12 @@ def upload_file():
         path_to_audio = app.config['UPLOAD_FOLDER'] + filename
         file.save(path_to_audio)
 
-        subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
+        instruments = []
+        for ins in ["bass", "drums", "guitar", "other", "piano", "vocals"]:
+            if ins in request.form:
+                instruments.append(ins)
+
+        subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--instruments", ",".join(instruments), "--wav2midi", "--midi2sheet"])
 
         # Copy generated sheets to static folder
         png_files = []

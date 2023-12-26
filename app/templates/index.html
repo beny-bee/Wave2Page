@@ -12,11 +12,126 @@
     <hr class="my-4">
 
     <div class="parent">
-      <form id="form_upload" class="form-group" method="POST" action="/upload" enctype="multipart/form-data">
-        <input type="file" name="file" class="form-control">
-        <input id="upload_button" type="submit" class="custom-button" value="Upload" onclick="loading();">
+      <form id="form_upload" method="POST" action="/upload" enctype="multipart/form-data">
+        <div class="form-inside">
+          <label>Select the instruments to consider in the process:</label>
+          <div class="switch-container">
+            <label>Bass</label>
+            <label class="switch">
+              <input type="checkbox" id="bass" name="bass">
+              <span class="slider round"></span>
+            </label>
+      
+            <label>Drums</label>
+            <label class="switch">
+              <input type="checkbox" id="drums" name="drums">
+              <span class="slider round"></span>
+            </label>
+
+            <label>Guitar</label>
+            <label class="switch">
+              <input type="checkbox" id="guitar" name="guitar">
+              <span class="slider round"></span>
+            </label>
+
+            <label>Piano</label>
+            <label class="switch">
+              <input type="checkbox" id="piano" name="piano">
+              <span class="slider round"></span>
+            </label>
+
+            <label>Vocals</label>
+            <label class="switch">
+              <input type="checkbox" id="vocals" name="vocals">
+              <span class="slider round"></span>
+            </label>
+
+            <label>Others</label>
+            <label class="switch">
+              <input type="checkbox" id="other" name="other">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+        <div style="height: 30px;"></div>
+        <div class="form-inside">
+          <input type="file" name="file" class="form-control">
+          <input id="upload_button" type="submit" class="custom-button" value="Upload" onclick="loading();">
+        </div>
       </form>
     </div>
+
+    <style>
+      .switch-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+      }
+
+      /* The switch - the box around the slider */
+      .switch {
+        position: relative;
+        display: flex;
+        width: 60px;
+        height: 34px;
+      }
+
+      /* Hide default HTML checkbox */
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      /* The slider */
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+
+      input:checked + .slider {
+        background-color: #2196F3;
+      }
+
+      input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+      }
+
+      input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+      }
+
+      /* Rounded sliders */
+      .slider.round {
+        border-radius: 34px;
+      }
+
+      .slider.round:before {
+        border-radius: 50%;
+      }
+    </style>
 
     <div id="loader">
       <div class="body-wavy">
@@ -78,11 +193,6 @@
       div#loader {
         display: none;
       }
-      /* 
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      } */
 
       .parent_center {
         margin: 1rem;
@@ -99,10 +209,11 @@
         padding: 1rem 1rem;
         vertical-align: middle;
       }
-      .form-group {
+      .form-inside {
         display: flex;
         align-items: center; /* This ensures vertical alignment */
         justify-content: space-between; /* Adjusts horizontal spacing */
+        vertical-align: middle;
       }
     
       .custom-button {
@@ -139,16 +250,6 @@
           cursor: pointer;
           font-size: 16px;
           line-height: 1.5;
-      }
-      
-      .form-group {
-          display: flex;
-          align-items: center;
-      }
-      
-      /* If you want to vertically center everything in case of line-height differences */
-      .form-group * {
-          vertical-align: middle;
       }
         
     </style>
