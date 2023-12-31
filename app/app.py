@@ -62,6 +62,23 @@ def contact():
 # def serve_image(filename):
 #     return send_from_directory(app.config['PNG_FOLDER']+filename.split(".")[0], filename)
 
+@app.route('/submit', methods=['POST'])
+def submit():
+    # Check if request is post and the form is submitted
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        message = request.form['message']
+
+        # Here you would add your logic to handle the form data:
+        # Validation, saving to a database, sending an email, etc.
+
+        # For now, let's just flash a message that we've received the submission
+        flash('Thank you, {}, we have received your message!'.format(name))
+
+        # Redirect back to the contact page, or to a 'thank you' page
+        return render_template("contact.html", app_data=app_data)
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     # Check if a file was submitted in the request
