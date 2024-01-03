@@ -163,9 +163,9 @@
     </style>
 
     <!-- Youtube service -->
-    <h2>YouTube</h2>
 
     <form id="Youtube_download" action="/upload_file_youtube" method="post">
+        <h2>YouTube</h2>
         <h5>Use a YouTube audio to start the process</h5>
         <div class="form-group">
             <label for="video_url">YouTube URL:</label>
@@ -202,7 +202,6 @@
     <div style="height: 25px;"></div>
     
     <!-- Service of independet tracks -->
-    <h2>Independent tracks</h2>
     <script>
         function changeVolume(input, audioFile) {
             const audioElement = input.previousElementSibling;
@@ -211,6 +210,7 @@
     </script>
 
     <form id="volume" action="/tracks_volume" method="post">
+        <h2>Independent tracks</h2>
         <h5>Select an already processed audio</h5>
         <select name="select" id="filename">
             {% for audio in audios_available %}
@@ -281,7 +281,7 @@
     <div style="height: 50px;"></div>
 
     <!-- Service audio to midi -->
-    <h2>Audio to MIDI</h2>
+
 
     <style>
         input[type="file"] {
@@ -321,6 +321,7 @@
     </style>
 
     <form id="audio_to_midi" action="/audio_to_midi" method="post" enctype="multipart/form-data">
+        <h2>Audio to MIDI</h2>
         <h5>Upload the audio that you want to convert to MIDI</h5>
         <div class="form-group">
             <input type="file" name="file" class="form-control">
