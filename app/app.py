@@ -19,7 +19,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app_data = {
     "name": "Wave2Page",
     "description": "A simple song to music sheet conversor",
-    "author": "Gerard Carvaca and Armando Rodriguez and Benjami Parellada",
+    "author": "Gerard Carvaca, Armando Rodriguez and Benjami Parellada",
     "html_title": "Wave2Page",
     "project_name": "Wave2Page",
     "keywords": "wave, page, music",
