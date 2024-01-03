@@ -139,6 +139,84 @@ input:checked + label .description {
     background-image: url('static/images/features/featureYoutube.jpg');
 }
 
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(10, 51, 231, 0.2);
+}
+.pricing-container {
+    display: flex;
+    justify-content: space-around; /* Adjusted for spacing between cards */
+    flex-wrap: wrap; /* Allows wrapping for smaller screens */
+    margin: 20px; /* Light background for the pricing section */
+}
+
+/* Individual pricing card */
+.pricing-card {
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    padding: 30px;
+    width: calc(25% - 20px); /* Fixed width for each card */
+    text-align: left;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(10, 51, 231, 0.2);
+}
+
+/* Title of the card */
+.pricing-title {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Purpose of the plan */
+.pricing-card p {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Unordered list for features */
+.pricing-features {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 25px;
+}
+
+/* List item for each feature */
+.pricing-features li {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* Ideal for text */
+.ideal-for {
+    font-style: italic;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Button styling */
+.pricing-button {
+    background-color: #5cb85c;
+    color: #ffffff;
+    padding: 10px 25px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.pricing-button:hover {
+    background-color: #4cae4c;
+}
 </style>
 
 <div class="project-info">
@@ -200,5 +278,26 @@ input:checked + label .description {
             </label>
         </div>
     </div>
+</div>
+<div class="pricing-container">
+    <!-- Iterate over pricing tiers -->
+    {% for tier in pricing_tiers %}
+    <div class="pricing-card">
+        <h3 class="pricing-title">{{ tier.name }}</h3>
+        <p class="purpose">{{ tier.purpose }}</p>
+        {% if tier.pricing %}
+        <p class="pricing">{{ tier.pricing }}</p>
+        {% endif %}
+        <ul class="features">
+            {% for feature in tier.features %}
+            <li>{{ feature }}</li>
+            {% endfor %}
+        </ul>
+        <p class="ideal-for">Ideal For: {{ tier.ideal_for }}</p>
+        {% if tier.button_text %}
+        <a href="{{ tier.button_link }}" class="pricing-button">{{ tier.button_text }}</a>
+        {% endif %}
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}

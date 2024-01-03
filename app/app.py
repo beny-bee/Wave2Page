@@ -45,9 +45,40 @@ if not os.path.exists(app.config['WAV_FOLDER']):
 def index():
     return render_template("index.html", app_data=app_data)
 
-@app.route("/about")
-def about():
-    return render_template("about.html", app_data=app_data)
+@app.route('/about')
+def pricing():
+    pricing_tiers = [
+    {
+        'name': 'Free Tier',
+        'purpose': 'Start using the basic functionalities for free and get a taste of the services with some limitations.',
+        'pricing': '€0.0/month or €0.0/year',
+        'features': ['5 conversions per month', 'Access to basic features', 'Contains ads'],
+        'ideal_for': 'people just starting out or want to test the services.',
+    },
+    {
+        'name': 'Standard Subscription',
+        'purpose': 'Get full access to more dedicated features with a reasonable monthly or yearly fee.',
+        'pricing': '€4.99/month or €49/year',
+        'features': ['Unlimited access', 'No ads', 'Priority customer support'],
+        'ideal_for': 'regular users, amateur musicians...',
+    },
+    {
+        'name': 'Premium Subscription',
+        'purpose': 'Have access to professional-grade features and advanced needs with a premium subscription.',
+        'pricing': '€14.99/month or €149/year',
+        'features': ['Includes all Standard features', 'High-resolution outputs', 'Premium support'],
+        'ideal_for': 'professionals, music producers...',
+    },
+    {
+        'name': 'Pay-Per-Use',
+        'purpose': 'Can use services flexibly and pay only for what I use without a subscription.',
+        'pricing': '€0.5 per conversion',
+        'features': ['Access to specific services on a per-use basis'],
+        'ideal_for': 'people who need services occasionally or for one-time projects.',
+    }
+]
+
+    return render_template('about.html', pricing_tiers=pricing_tiers, app_data=app_data)
 
 @app.route("/service")
 def service():
