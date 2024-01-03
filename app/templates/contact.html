@@ -80,9 +80,12 @@
         transition: color 0.3s;
     }
     .contact-form-container {
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        margin-bottom: 20px; /* Include padding and border in the element's total width and height */
     }
 
     .contact-form {
@@ -115,6 +118,21 @@
         .contact-form {
             padding: 15px;
         }
+    }
+    .custom-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+        margin: 0 10px;
+        width: 20%;
+    }
+
+    .custom-button:hover {
+        background-color: #0056b3;
     }
 
 </style>
@@ -171,7 +189,7 @@
             <label for="message">Message:</label>
             <textarea id="message" name="message" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Send Message</button>
+        <button type="submit" class="custom-button">Send Message</button>
     </form>
 </div>
 {% endblock %}
