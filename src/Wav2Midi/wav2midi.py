@@ -1,7 +1,7 @@
 from basic_pitch.inference import predict_and_save, predict
 
 from mido import MidiFile, MidiTrack, MetaMessage, merge_tracks
-from music21 import midi, tempo, stream, instrument, note
+from music21 import midi, tempo, stream, instrument, note, chord, duration, pitch, interval
 import pretty_midi
 
 import numpy as np
@@ -130,38 +130,113 @@ def combine_midi_files(midi_files, output_path, target_tempo):
         mf.close()
         
         # Convert MIDI file to a music21 stream
-        s = midi.translate.midiFileToStream(mf)
+        s = midi.translate.midiFileToStream(mf, addStartDelay=True)
 
         print(f"Processing {instr_name}...")
         # Process each part (track) in the MIDI
-        for part in s.parts:
-            notes = [n for n in part.recurse() if isinstance(n, note.Note)]
-            
-            print(f"Found {len(notes)} notes in {instr_name}.")
-            # Clear all elements from the part (notes, rests, etc.)
-            part.clear()
 
-            # Different quantization for piano
-            if instr_name == 'piano':
-                notes = quantize_notes(notes, 0.25)  # Half notes
-                notes = limit_note_duration(notes, 0.25)  # Limiting duration to double note (max 1 beats)
-            else:
-                notes = quantize_notes(notes, 0.5)  # Quarter notes
+        part = s.parts[0]
 
-            # Apply overlapping filter for bass and vocals only
-            if instr_name in ['bass', 'vocals']:
-                notes = filter_overlapping_notes(notes)
-                notes = limit_note_duration(notes, 0.5)  # Limiting duration to double note (max 1 beats)
+        if instr_name == 'piano':
+            part.quantize(quarterLengthDivisors=(4, 8), processOffsets=True, processDurations=True, inPlace=True)
+        else:
+            part.quantize(quarterLengthDivisors=(4,), processOffsets=True, processDurations=True, inPlace=True)
 
-            if instr_name != 'drums':
-                notes = remove_short_outliers(notes)
-                notes = remove_pitch_outliers(notes)
-                notes = remove_low_velocity_notes(notes)
+        if instr_name == 'drums':
+            instr_obj = get_instrument_name_class(instr_name)
+            part.insert(0, instr_obj)
+            combined_stream.append(part)
+            continue
 
-            for el in part.notesAndRests:
-                part.remove(el)
-            for n in notes:
-                part.append(n)
+        notes = [n for n in part.recurse() if isinstance(n, note.Note)]
+
+        print(f"Found {len(notes)} notes in {instr_name}.")
+        # Print out the notes and their onset
+
+        # Clear all elements from the part (notes, rests, etc.)
+        #part.clear()
+
+        # Different quantization for piano
+        #if instr_name == 'piano':
+        #    #notes = quantize_notes(notes, 0.25)  # Half notes
+        #    #notes = limit_note_duration(notes, 0.25)  # Limiting duration to double note (max 1 beats)
+        #else:
+        #    #notes = quantize_notes(notes, 0.5)  # Quarter notes
+
+        # Apply overlapping filter for bass and vocals only
+        if instr_name in ['bass', 'vocals']:
+            notes = filter_overlapping_notes(notes)
+            #notes = limit_note_duration(notes, 0.5)  # Limiting duration to double note (max 1 beats)
+
+            # Find if there are chords and remove them
+            chords = [n for n in part.recurse() if isinstance(n, chord.Chord)]
+            if len(chords) > 0:
+                print(f"Found {len(chords)} chords in {instr_name}.")
+                for ch in chords:
+                    part.remove(ch, recurse = True)
+
+        if instr_name == 'piano':
+            notes = remove_pitch_outliers(notes, outlier=2.5)
+            notes = remove_low_velocity_notes(notes, 100)
+        else:
+            notes = remove_short_outliers(notes)
+            notes = remove_pitch_outliers(notes)
+            notes = remove_low_velocity_notes(notes)
+
+        if instr_name in ['piano', 'guitar']:
+            # Chordify the part, this will consolidate simultaneous notes into chords
+            chords = [n for n in part.recurse() if isinstance(n, chord.Chord)]
+
+            for c in chords:
+                # Save original chord pitches and duration
+                original_pitches = c.pitches
+                duration = c.duration
+
+                # Step 2: Remove All Notes
+                for p in c.pitches:
+                    c.remove(p)
+
+                # Analyze original chord to determine quality and appropriate pitches
+                original_chord = chord.Chord(original_pitches)
+                root_pitch = original_chord.root()
+                third_interval = interval.Interval('M3') if original_chord.quality in ['major', 'augmented'] else interval.Interval('m3')
+                fifth_interval = interval.Interval('P5') if original_chord.quality not in ['diminished', 'augmented'] else interval.Interval('dim5') if original_chord.quality == 'diminished' else interval.Interval('aug5')
+                seventh = None
+
+                if original_chord.containsSeventh():
+                    if original_chord.isDominantSeventh():
+                        seventh = interval.Interval('m7')
+                    elif original_chord.isMajorSeventh():
+                        seventh = interval.Interval('M7')
+                    elif original_chord.isMinorSeventh() or original_chord.isHalfDiminishedSeventh():
+                        seventh = interval.Interval('m7')
+                    elif original_chord.isDiminishedSeventh():
+                        seventh = interval.Interval('dim7')
+
+                # Step 3: Add Root, Third, Fifth, and possibly Seventh
+                pitches_to_add = [root_pitch.transpose(i) for i in [interval.Interval('P1'), third_interval, fifth_interval] if i]  # Always add root, third, fifth
+
+                # If the original chord had a seventh, add an appropriate seventh
+                if seventh:
+                    pitches_to_add.append(root_pitch.transpose(seventh))
+
+                # Add the new notes to the chord
+                for p in pitches_to_add:
+                    c.add(p)
+
+                # Restore original duration
+                c.duration = duration
+
+                c.removeRedundantPitches(inPlace=True)  # Remove duplicate pitches
+                c.removeRedundantPitchClasses(inPlace=True)  # Remove duplicate pitch classes
+                c.sortDiatonicAscending(inPlace=True)  # Sort the pitches in ascending order
+
+        # Obtain the notes that should be kept
+        notes_original = [n for n in part.recurse() if isinstance(n, note.Note)]
+        notes_to_remove = [n for n in notes_original if n not in notes]
+
+        for notes in notes_to_remove:
+            part.remove(notes, recurse=True)
 
         # Get the appropriate instrument object
         instr_obj = get_instrument_name_class(instr_name)
@@ -174,16 +249,20 @@ def combine_midi_files(midi_files, output_path, target_tempo):
                 lyrics = lyric_file.read().split()  # Splitting words assuming each word is a note
 
             # Identifying the correct vocal part
-            vocal_part = s.parts[0]
+            vocal_part = part
             notes_and_chords = [el for el in vocal_part.recurse() if isinstance(el, note.Note)]
 
             # Assign lyrics to notes and chords
             for lyric, nc in zip(lyrics, notes_and_chords):
                 nc.lyric = lyric  # Assign each lyric to each note or chord
 
+        if instr_name == 'piano':
+            instr_obj.midiChannel = 1
+        elif instr_name == 'bass':
+            instr_obj.midiChannel = 2
+
         # Apply the instrument to each part and append to the combined stream
-        for part in s.parts:
-            part.insert(0, instr_obj)
+        part.insert(0, instr_obj)
                 
         #part = s.parts[0]
         #part.insert(0, instr_obj)
@@ -273,7 +352,7 @@ def remove_short_outliers(notes, octave_range=12):
     print(f"Removed {len(notes) - len(cleaned_notes)} short outlier notes.")
     return cleaned_notes
 
-def remove_pitch_outliers(notes):
+def remove_pitch_outliers(notes, outlier = 1.5):
     """
     Remove notes whose pitch is far from the median pitch and outside 2 standard deviations.
     """
@@ -285,8 +364,8 @@ def remove_pitch_outliers(notes):
     std_pitch = np.std(pitches)  # Calculate the standard deviation of pitches
 
     # Define pitch boundaries
-    lower_bound = median_pitch - 1.5 * std_pitch
-    upper_bound = median_pitch + 1.5 * std_pitch
+    lower_bound = median_pitch - outlier * std_pitch
+    upper_bound = median_pitch + outlier * std_pitch
     # Filter notes to remove outliers
     cleaned_notes = [n for n in notes if lower_bound <= n.pitch.midi <= upper_bound]
 
