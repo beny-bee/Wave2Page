@@ -4,7 +4,9 @@ import argparse
 from music21 import midi
 from Wav2Midi import wav2midi
 from Midi2Sheet import midi2Sheet
-from Splitter.Splitter import AudioSplitter
+import utils
+
+#from Splitter.Splitter import AudioSplitter
 
 SEPARATOR = "\\" if os.name == 'nt' else "/"
 
@@ -27,16 +29,29 @@ def convert_audio_to_midi(input_path, output_path, tempo):
         os.remove(os.path.join(output_path, file))
 
     instruments = []
+    audio_paths = []
+
     for audio_file in os.listdir(input_path):
         instrument = audio_file.split(".")[0]
         if instrument == 'other':
             continue
         input_audio_path = os.path.join(input_path, audio_file)
-        wav2midi.convert_audio_to_midi(input_audio_path, output_path, tempo)
+        if utils.is_audio_silent(input_audio_path):
+            continue
+        if instrument == 'vocals':
+            wav2midi.transcribe_vocals(input_audio_path, output_path)
+        audio_paths.append(input_audio_path)
         instruments.append(instrument)
 
-    midi_files = [os.path.join(output_path, midi_file) for midi_file in os.listdir(output_path)]
-    wav2midi.combine_midi_files(midi_files, f'{output_path}{SEPARATOR}combined.mid', instruments, tempo)
+    wav2midi.convert_audio_to_midi(audio_paths, output_path, tempo)
+    if 'drums' in instruments:
+        audio_path_drum = [audio_path for audio_path in audio_paths if audio_path.split(SEPARATOR)[-1].split(".")[0] == 'drums'][0]
+        wav2midi.convert_drums_to_midi(audio_path_drum, output_path, tempo)
+
+    midi_files = [os.path.join(output_path, midi_file) for midi_file in os.listdir(output_path) if midi_file.endswith(".mid")]
+    midi_files = sorted(midi_files, key=utils.sort_paths)
+    wav2midi.combine_midi_files(midi_files, f'{output_path}{SEPARATOR}combined.mid', tempo)
+    #wav2midi.combine_midi_files(midi_files, f'{output_path}{SEPARATOR}combined.mid', instruments, tempo)
        
 def convert_midi_to_sheet(input_path, output_path):
     output_path = output_path if output_path[-1] == SEPARATOR else output_path + SEPARATOR

@@ -25,6 +25,15 @@ from reportlab.lib.pagesizes import A4
 #         print(f"Done {i+1}/{len(score.parts)}")
 
 def midi2Sheet(input_path, output_path, SEPARATOR):
+    os.makedirs(output_path, exist_ok=True)
+    
+    # Load the MIDI file as a Part object
+    part = pt.load_score(input_path).parts[0]
+    print(part.pretty())
+    pt.render(part)
+
+    
+def midi2Sheet_2(input_path, output_path, SEPARATOR):
     # Create the output directory if it doesn't exists
     os.makedirs(output_path, exist_ok=True)
     
