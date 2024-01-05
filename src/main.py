@@ -6,7 +6,7 @@ from Wav2Midi import wav2midi
 from Midi2Sheet import midi2Sheet
 import utils
 
-#from Splitter.Splitter import AudioSplitter
+from Splitter.Splitter import AudioSplitter
 
 SEPARATOR = "\\" if os.name == 'nt' else "/"
 
@@ -37,6 +37,7 @@ def convert_audio_to_midi(input_path, output_path, tempo):
             continue
         input_audio_path = os.path.join(input_path, audio_file)
         if utils.is_audio_silent(input_audio_path):
+            print(f"TODO, return that {instrument} will not be used and show it to the user")
             continue
         if instrument == 'vocals':
             wav2midi.transcribe_vocals(input_audio_path, output_path)
@@ -56,7 +57,7 @@ def convert_audio_to_midi(input_path, output_path, tempo):
 def convert_midi_to_sheet(input_path, output_path):
     output_path = output_path if output_path[-1] == SEPARATOR else output_path + SEPARATOR
     print(f'Converting {input_path} to sheet music...\nOutput will be saved to {output_path} directory')
-    midi2Sheet.midi2Sheet(f"{input_path}{SEPARATOR}combined.mid", output_path, SEPARATOR)
+    midi2Sheet.midi2Sheet_2(f"{input_path}{SEPARATOR}combined.musicxml", output_path, SEPARATOR)
 
 def main():
     parser = argparse.ArgumentParser(description='Process audio and midi files to generate music sheeets.')

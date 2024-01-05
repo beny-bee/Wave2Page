@@ -37,8 +37,10 @@ def midi2Sheet_2(input_path, output_path, SEPARATOR):
     # Create the output directory if it doesn't exists
     os.makedirs(output_path, exist_ok=True)
     
-    # On Windows, the command might be r"C:\Program Files\MuseScore 4\bin\MuseScore4.exe"
-    musescore_command = pt.io.musescore.find_musescore() #"mscore" for benja
+    # On Windows, the command is: "C:\Program Files\MuseScore 4\bin\MuseScore4.exe"
+    # On Linux Subsystem, the command is: "/mnt/c/Program Files/MuseScore 4/bin/MuseScore4.exe" or the path where is mounted from
+    # On native Linux, the command is: "mscore"
+    musescore_command = "/mnt/c/Program Files/MuseScore 4/bin/MuseScore4.exe"
     
     # Define the output path for the sheet music
     sheetName = output_path.split(SEPARATOR)[-2]
@@ -46,15 +48,15 @@ def midi2Sheet_2(input_path, output_path, SEPARATOR):
     outPath = outPathNoExtension+".xml"
     
     # Run MuseScore to convert the MIDI file to musicxml
-    subprocess.run([musescore_command, input_path, "-o", outPath])
+    subprocess.run([musescore_command, input_path.replace("musicxml","mid"), "-o", outPath])
     
     # Apply changes to musicxml
-    modifyMusicXML(outPath)
+    # modifyMusicXML(outPath)
     
     # Run MuseScore to convert the MIDI file to sheet music
     ###### I think is not taking the styles form there ######
-    subprocess.run([musescore_command, outPath, "-o", outPathNoExtension+".pdf", "--style", SEPARATOR.join(["data","sheet","style.mss"])])
-    subprocess.run([musescore_command, outPath, "-o", outPathNoExtension+".png", "-f"])
+    subprocess.run([musescore_command, input_path, "-o", outPathNoExtension+".pdf", "--style", SEPARATOR.join(["data","sheet","style.mss"])])
+    # subprocess.run([musescore_command, outPath, "-o", outPathNoExtension+".png", "-f"])
     
     # Add logo to pdf
     addLogoToPDF(outPathNoExtension+".pdf", outPathNoExtension+".pdf",

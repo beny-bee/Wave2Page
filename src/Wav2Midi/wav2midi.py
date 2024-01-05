@@ -1,7 +1,7 @@
 from basic_pitch.inference import predict_and_save, predict
 
 from mido import MidiFile, MidiTrack, MetaMessage, merge_tracks
-from music21 import midi, tempo, stream, instrument, note, chord, duration, pitch, interval
+from music21 import midi, tempo, stream, instrument, note, chord, duration, pitch, interval, musicxml
 import pretty_midi
 
 import numpy as np
@@ -281,7 +281,16 @@ def combine_midi_files(midi_files, output_path, target_tempo):
     mf.close()
 
     # Save the combined stream as a MusicXML file instead of a MIDI file
-    combined_stream.write('musicxml', fp=output_path.replace('.mid', '.musicxml'))
+    xd = musicxml.m21ToXml.GeneralObjectExporter().parse(combined_stream)
+    xf = open(output_path.replace('.mid', '.musicxml'), 'w')
+    xf.write(xd.decode('utf-8'))
+    xf.close()
+    
+    # mf.open(output_path.replace('.mid', '.musicxml'), 'wb')
+    # mf.write()
+    # mf.close()
+
+    # combined_stream.write('musicxml', fp=output_path.replace('.mid', '.musicxml'))
 
 def get_instrument_name_class(instrument_name):
     if instrument_name == "piano":

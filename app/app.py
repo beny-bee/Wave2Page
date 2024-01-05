@@ -119,6 +119,9 @@ def upload_file():
     file = request.files['file']
     filename = file.filename
 
+    # Trying to erase the previous sheet generated, but didin't work
+    # render_template("index.html", filename=filename, app_data=app_data)
+
     if file and filename.endswith('.wav'):
         # Save the uploaded file to the upload folder
         path_to_audio = app.config['UPLOAD_FOLDER'] + filename
