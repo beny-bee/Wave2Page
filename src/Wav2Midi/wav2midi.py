@@ -79,9 +79,9 @@ def instrument_name_to_program(instrument_name):
     elif instrument_name == 'vocals':
         return 52
     elif instrument_name == 'bass':
-        return 33
-    elif instrument_name == 'guitar':
         return 32
+    elif instrument_name == 'guitar':
+        return 26
     elif instrument_name == 'drums':
         return 9
 
@@ -257,9 +257,9 @@ def combine_midi_files(midi_files, output_path, target_tempo):
                 nc.lyric = lyric  # Assign each lyric to each note or chord
 
         if instr_name == 'piano':
-            instr_obj.midiChannel = 1
+            instr_obj.midiChannel = 6
         elif instr_name == 'bass':
-            instr_obj.midiChannel = 2
+            instr_obj.midiChannel = 12
 
         # Apply the instrument to each part and append to the combined stream
         part.insert(0, instr_obj)

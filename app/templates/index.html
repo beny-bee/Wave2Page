@@ -150,13 +150,10 @@
       </div>
     </div>
 
-    {% if filename%}
-        <p>The file '{{ filename }}' was successfully uploaded.</p>
-
+    {% if png_files%}
         {% for image in png_files %}
           <img src="{{image}}" alt="{{image}}" height="1000">
         {% endfor %}
-        
     {% endif %}
 
     <style>

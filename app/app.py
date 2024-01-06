@@ -139,11 +139,15 @@ def upload_file():
         origin = path_to_audio.replace("audio/","sheet/").replace(".wav","")
         for f in os.listdir(origin):
             if f.endswith('.png'):
-                destin = app.config['PNG_FOLDER']+f
+                destin_folder = app.config['PNG_FOLDER']+filename.split(".")[0]
+                if not os.path.exists(destin_folder):
+                    os.makedirs(destin_folder)
+                destin = destin_folder+"/"+f
                 shutil.copyfile(origin+"/"+f, destin)
                 png_files.append(destin.replace("app/",""))
+                print(png_files)
         
-        return render_template("index.html", filename=filename, app_data=app_data, png_files=png_files)
+        return render_template("index.html", app_data=app_data, png_files=png_files)
     else:
         return 'Invalid file format. Please upload a .wav file.'
 

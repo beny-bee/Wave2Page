@@ -48,7 +48,7 @@ def midi2Sheet_2(input_path, output_path, SEPARATOR):
     outPath = outPathNoExtension+".xml"
     
     # Run MuseScore to convert the MIDI file to musicxml
-    subprocess.run([musescore_command, input_path.replace("musicxml","mid"), "-o", outPath])
+    subprocess.run([musescore_command, input_path, "-o", outPath])
     
     # Apply changes to musicxml
     # modifyMusicXML(outPath)
@@ -56,7 +56,7 @@ def midi2Sheet_2(input_path, output_path, SEPARATOR):
     # Run MuseScore to convert the MIDI file to sheet music
     ###### I think is not taking the styles form there ######
     subprocess.run([musescore_command, input_path, "-o", outPathNoExtension+".pdf", "--style", SEPARATOR.join(["data","sheet","style.mss"])])
-    # subprocess.run([musescore_command, outPath, "-o", outPathNoExtension+".png", "-f"])
+    subprocess.run([musescore_command, input_path, "-o", outPathNoExtension+".png"])
     
     # Add logo to pdf
     addLogoToPDF(outPathNoExtension+".pdf", outPathNoExtension+".pdf",
