@@ -160,6 +160,13 @@
         {% endif %}
     {% endwith %}
 
+    {% if transcription%}
+      <div style="height: 15px;"></div>
+      <h5>Song transcription:</h5>
+      <h9>{{transcription}}</h9>
+      <div style="height: 30px;"></div>
+    {% endif %}
+
     {% if png_files%}
         {% for image in png_files %}
           <img src="{{image}}" alt="{{image}}" height="1000">

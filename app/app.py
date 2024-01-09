@@ -30,6 +30,10 @@ app.config['UPLOAD_FOLDER'] = 'data/audio/'
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
+app.config['MIDI_DATA_FOLDER'] = 'data/midi/'
+if not os.path.exists(app.config['MIDI_DATA_FOLDER']):
+    os.makedirs(app.config['MIDI_DATA_FOLDER'])
+
 app.config['PNG_FOLDER'] = 'app/static/images/'
 if not os.path.exists(app.config['PNG_FOLDER']):
     os.makedirs(app.config['PNG_FOLDER'])
@@ -143,6 +147,15 @@ def upload_file():
 
         informNotUsedInstrumentsFromOutput(output)
 
+        transcription = None
+        if premium: 
+            try:
+                path = app.config['MIDI_DATA_FOLDER'] + filename.split(".")[0] + "/transcription.txt"
+                with open(path) as f:
+                    transcription = f.read()
+            except:
+                pass
+
         # Copy generated sheets to static folder
         png_files = []
         origin = path_to_audio.replace("audio/","sheet/").replace(".wav","")
@@ -157,7 +170,7 @@ def upload_file():
 
         flash("Succesfuly generated data sheet!")
         
-        return render_template("index.html", app_data=app_data, png_files=png_files)
+        return render_template("index.html", app_data=app_data, png_files=png_files, transcription=transcription)
     else:
         return 'Invalid file format. Please upload a .wav file.'
 
