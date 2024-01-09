@@ -107,6 +107,15 @@ def submit():
         # Redirect back to the contact page, or to a 'thank you' page
         return render_template("contact.html", app_data=app_data)
 
+def informNotUsedInstrumentsFromOutput(output):
+    pattern = r'\*\*\*~\*\*\* (.*?) \*\*\*~\*\*\*\|'
+    noUsedInstruments = re.findall(pattern, str(output))
+    if len(noUsedInstruments) == 1:
+        flash(f"The {noUsedInstruments[0]} was not found in the provided song")
+    else:
+        noUsedInstrumentsAux = ", ".join(noUsedInstruments[:-1])
+        flash(f"The instruments {noUsedInstrumentsAux} and {noUsedInstruments[-1]} were not found in the provided song")
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     # Check if a file was submitted in the request
@@ -115,6 +124,8 @@ def upload_file():
     
     file = request.files['file']
     filename = file.filename
+
+    premium = "premium" in request.form
 
     # Trying to erase the previous sheet generated, but didin't work
     # render_template("index.html", filename=filename, app_data=app_data)
@@ -126,16 +137,11 @@ def upload_file():
 
         instruments = [ins for ins in ["bass", "drums", "guitar", "other", "piano", "vocals"] if ins in request.form]
 
-        #check_output
-        output = subprocess.check_output(['python3', "src/main.py", path_to_audio, "--separate", "--instruments", ",".join(instruments), "--wav2midi", "--midi2sheet"])
+        callList = ['python3', "src/main.py", path_to_audio, "--separate", "--instruments", ",".join(instruments), "--wav2midi", "--midi2sheet"]
+        if premium: callList.append("--premium")
+        output = subprocess.check_output(callList)
 
-        pattern = r'\*\*\*~\*\*\* (.*?) \*\*\*~\*\*\*\|'
-        noUsedInstruments = re.findall(pattern, str(output))
-        if len(noUsedInstruments) == 1:
-            flash(f"The {noUsedInstruments[0]} was not found in the provided song")
-        else:
-            noUsedInstrumentsAux = ", ".join(noUsedInstruments[:-1])
-            flash(f"The instruments {noUsedInstrumentsAux} and {noUsedInstruments[-1]} were not found in the provided song")
+        informNotUsedInstrumentsFromOutput(output)
 
         # Copy generated sheets to static folder
         png_files = []
@@ -163,15 +169,17 @@ def upload_file_youtube():
     title = ys.YoutubeAudioDownload(video_url, app.config['UPLOAD_FOLDER'])
     
     if filename != '':
-        path_to_audio_long = app.config['UPLOAD_FOLDER']+title+'.wav'
-        path_to_audio = app.config['UPLOAD_FOLDER'] + filename + '.wav'        
+        path_to_audio_long = app.config['UPLOAD_FOLDER'] + title + '.wav'
+        path_to_audio = app.config['UPLOAD_FOLDER'] + filename + '.wav'     
         shutil.copyfile(path_to_audio_long, path_to_audio)
         os.remove(path_to_audio_long)
-    else :
+    else:
         path_to_audio = app.config['UPLOAD_FOLDER'] + title + '.wav' 
     flash("System working on sheet generation...")
     
-    subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
+    output = subprocess.check_output(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet", "--premium"])
+
+    informNotUsedInstrumentsFromOutput(output)
 
     flash("Succesfuly dowloaded audio from youtube and music sheet created!")  # Flashing the success or error message
     
@@ -220,7 +228,9 @@ def audio_to_midi():
         file.save(path_to_audio)
 
         print("Calling python code")
-        subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi"])
+        output = subprocess.check_output(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi"])
+
+        informNotUsedInstrumentsFromOutput(output)
 
         path_to_midi = app.config['UPLOAD_FOLDER'].replace("/audio","/midi") + filename.split(".")[0] + "/combined.mid"
         path_to_destin = app.config['MIDI_FOLDER'] + filename.split(".")[0]

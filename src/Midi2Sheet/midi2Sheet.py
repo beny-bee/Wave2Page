@@ -33,7 +33,7 @@ def midi2Sheet(input_path, output_path, SEPARATOR):
     pt.render(part)
 
     
-def midi2Sheet_2(input_path, output_path, SEPARATOR):
+def midi2Sheet_2(input_path, output_path, SEPARATOR, premium):
     # Create the output directory if it doesn't exists
     os.makedirs(output_path, exist_ok=True)
     
@@ -48,7 +48,7 @@ def midi2Sheet_2(input_path, output_path, SEPARATOR):
     outPath = outPathNoExtension+".xml"
     
     # Run MuseScore to convert the MIDI file to musicxml
-    subprocess.run([musescore_command, input_path, "-o", outPath])
+    # subprocess.run([musescore_command, input_path, "-o", outPath])
     
     # Apply changes to musicxml
     # modifyMusicXML(outPath)
@@ -63,35 +63,19 @@ def midi2Sheet_2(input_path, output_path, SEPARATOR):
     
     subprocess.run([musescore_command, input_path, "-o", outPathNoExtension+".png"])
 
-    path = SEPARATOR.join((outPathNoExtension+".png").split(SEPARATOR)[:-1])
-    i = 0
-    for image in os.listdir(path):
-        if not image.endswith(".png"): continue
-        background = Image.open(path+SEPARATOR+image)
-        foreground = Image.open('app/static/logos/logo_white_alpha.png')
-        background = background.convert("RGBA")
-        foreground = foreground.convert("RGBA")
-
-        # Create a new alpha channel with reduced opacity
-        alpha = Image.new('L', foreground.size, 127)  # Using 127 for 50% transparency
-
-        # Split the channels from the original image and swap the alpha channel
-        r, g, b, _ = foreground.split()
-        foreground = Image.merge('RGBA', (r, g, b, alpha))
-
-        # Create a new image for the result
-        result = Image.alpha_composite(background, foreground)
-
-        # mask = foreground.split()[3]
-        # # Paste the foreground onto the background using the mask
-        # background.paste(foreground, (0, 0), mask)
-
-        # background.paste(foreground, (0, 0), foreground)
-        result.save(path+SEPARATOR+f"xd{i}.png")
-        i += 1
-
-    
-    
+    if not premium:
+        path = SEPARATOR.join((outPathNoExtension+".png").split(SEPARATOR)[:-1])
+        for image in os.listdir(path):
+            if not image.endswith(".png"): continue
+            background = Image.open(path+SEPARATOR+image)
+            foreground = Image.open('app/static/logos/logo_white_alpha.png')
+            background = background.convert("RGBA")
+            foreground = foreground.convert("RGBA")
+            alpha = Image.new('L', foreground.size, 127)
+            r, g, b, _ = foreground.split()
+            foreground = Image.merge('RGBA', (r, g, b, alpha))
+            result = Image.alpha_composite(background, foreground)
+            result.save(path+SEPARATOR+image)
     
     
 def modifyMusicXML(path):

@@ -13,6 +13,12 @@
 
     <div class="parent">
       <form id="form_upload" method="POST" action="/upload" enctype="multipart/form-data">
+        <div class="form-inside-right">
+          <label>Premium mode</label>
+          <div style="width: 15px;"></div>
+          <input type="checkbox" id="premium" name="premium" checked>
+        </div>
+        <div style="height: 30px;"></div>
         <div class="form-inside">
           <label>Select the instruments to consider in the process:</label>
           <div class="switch-container">
@@ -214,6 +220,12 @@
         display: flex;
         align-items: center; /* This ensures vertical alignment */
         justify-content: space-between; /* Adjusts horizontal spacing */
+        vertical-align: middle;
+      }
+      .form-inside-right {
+        display: flex;
+        align-items: right; /* This ensures vertical alignment */
+        justify-content: right; /* Adjusts horizontal spacing */
         vertical-align: middle;
       }
     
