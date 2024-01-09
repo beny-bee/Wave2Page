@@ -13,6 +13,12 @@
 
     <div class="parent">
       <form id="form_upload" method="POST" action="/upload" enctype="multipart/form-data">
+        <div class="form-inside-right">
+          <label>Premium mode</label>
+          <div style="width: 15px;"></div>
+          <input type="checkbox" id="premium" name="premium" checked>
+        </div>
+        <div style="height: 30px;"></div>
         <div class="form-inside">
           <label>Select the instruments to consider in the process:</label>
           <div class="switch-container">
@@ -43,12 +49,6 @@
             <label>Vocals</label>
             <label class="switch">
               <input type="checkbox" id="vocals" name="vocals" checked>
-              <span class="slider round"></span>
-            </label>
-
-            <label>Others</label>
-            <label class="switch">
-              <input type="checkbox" id="other" name="other" checked>
               <span class="slider round"></span>
             </label>
           </div>
@@ -150,6 +150,16 @@
       </div>
     </div>
 
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="message">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
     {% if png_files%}
         {% for image in png_files %}
           <img src="{{image}}" alt="{{image}}" height="1000">
@@ -210,6 +220,12 @@
         display: flex;
         align-items: center; /* This ensures vertical alignment */
         justify-content: space-between; /* Adjusts horizontal spacing */
+        vertical-align: middle;
+      }
+      .form-inside-right {
+        display: flex;
+        align-items: right; /* This ensures vertical alignment */
+        justify-content: right; /* Adjusts horizontal spacing */
         vertical-align: middle;
       }
     

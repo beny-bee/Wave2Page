@@ -37,7 +37,7 @@ def convert_audio_to_midi(input_path, output_path, tempo):
             continue
         input_audio_path = os.path.join(input_path, audio_file)
         if utils.is_audio_silent(input_audio_path):
-            print(f"TODO, return that {instrument} will not be used and show it to the user")
+            print(f"***~*** {instrument} ***~***|")
             continue
         if instrument == 'vocals':
             wav2midi.transcribe_vocals(input_audio_path, output_path)
@@ -52,12 +52,11 @@ def convert_audio_to_midi(input_path, output_path, tempo):
     midi_files = [os.path.join(output_path, midi_file) for midi_file in os.listdir(output_path) if midi_file.endswith(".mid")]
     midi_files = sorted(midi_files, key=utils.sort_paths)
     wav2midi.combine_midi_files(midi_files, f'{output_path}{SEPARATOR}combined.mid', tempo)
-    #wav2midi.combine_midi_files(midi_files, f'{output_path}{SEPARATOR}combined.mid', instruments, tempo)
        
-def convert_midi_to_sheet(input_path, output_path):
+def convert_midi_to_sheet(input_path, output_path, premium):
     output_path = output_path if output_path[-1] == SEPARATOR else output_path + SEPARATOR
     print(f'Converting {input_path} to sheet music...\nOutput will be saved to {output_path} directory')
-    midi2Sheet.midi2Sheet_2(f"{input_path}{SEPARATOR}combined.mid", output_path, SEPARATOR)
+    midi2Sheet.midi2Sheet_2(f"{input_path}{SEPARATOR}combined.mid", output_path, SEPARATOR, premium)
 
 def main():
     parser = argparse.ArgumentParser(description='Process audio and midi files to generate music sheeets.')
@@ -66,6 +65,7 @@ def main():
     parser.add_argument('--instruments', action='store', type=str, help='Instruments to be used in the separation process', required=False)
     parser.add_argument('--wav2midi', action='store_true', help='Convert audio to midi')
     parser.add_argument('--midi2sheet', action='store_true', help='Convert midi to sheet')
+    parser.add_argument('--premium', action='store_true', help='Perform premium conversion')
 
     args = parser.parse_args()
     input_path_original = args.input_path
@@ -117,7 +117,7 @@ def main():
         elif args.wav2midi:
             input_path = input_path.replace(f"data{SEPARATOR}separated",f"data{SEPARATOR}midi")
             output_path = input_path_original.replace(f"data{SEPARATOR}separated",f"data{SEPARATOR}sheet").replace(".wav","")
-        convert_midi_to_sheet(input_path, output_path)
+        convert_midi_to_sheet(input_path, output_path, args.premium)
 
 if __name__ == '__main__':
     main()

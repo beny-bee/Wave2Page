@@ -4,13 +4,11 @@ from unidecode import unidecode
 import re
 
 def YoutubeAudioDownload(video_url, path):
-    print("URL", video_url)
     if (video_url != "") :
         try:
             video = YouTube(video_url)
             audio = video.streams.filter(only_audio = True).first()
             title = postprocess_title(video.title)
-            print(title)
             out_file = audio.download(path)
             # change to .wav
             directory, file_name = os.path.split(out_file)
@@ -18,8 +16,6 @@ def YoutubeAudioDownload(video_url, path):
             new_file_name = name + '.wav'
             new_file = os.path.join(directory, new_file_name)
             # Rename the file
-            print("Out file",out_file)
-            print("New file",new_file)
             os.rename(out_file, new_file) 
             print("Audio was downloaded successfully")
         except:
