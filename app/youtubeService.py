@@ -11,16 +11,12 @@ def YoutubeAudioDownload(video_url, path):
             title = postprocess_title(video.title)
             out_file = audio.download(path)
             # change to .wav
-            print("HERE, ",out_file)
             directory, file_name = os.path.split(out_file)
-            print(directory, file_name)
             name, _ = os.path.splitext(file_name)
-            print("YEEYEY", name)
             new_file_name = title + '.wav'
             new_file = os.path.join(directory, new_file_name)
             # Rename the file
             os.rename(out_file, new_file)
-            # os.remove(out_file)
             print("Audio was downloaded successfully")
         except:
             print("Failed to download audio")

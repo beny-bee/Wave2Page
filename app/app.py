@@ -106,11 +106,8 @@ def submit():
         email = request.form['email']
         message = request.form['message']
 
-        # Here you would add your logic to handle the form data:
-        # Validation, saving to a database, sending an email, etc.
-
         # For now, let's just flash a message that we've received the submission
-        flash('Thank you, {}, we have received your message!'.format(name))
+        flash('Thank you, we have received your message!')
 
         # Redirect back to the contact page, or to a 'thank you' page
         return render_template("contact.html", app_data=app_data)
@@ -132,25 +129,17 @@ def upload_file():
     
     file = request.files['file']
     filename = file.filename
-
     premium = "premium" in request.form
-
-    # Trying to erase the previous sheet generated, but didin't work
-    # render_template("index.html", filename=filename, app_data=app_data)
 
     if file and filename.endswith('.wav'):
         # Save the uploaded file to the upload folder
         path_to_audio = app.config['UPLOAD_FOLDER'] + filename
         file.save(path_to_audio)
-
         instruments = [ins for ins in ["bass", "drums", "guitar", "other", "piano", "vocals"] if ins in request.form]
-
         callList = ['python3', "src/main.py", path_to_audio, "--separate", "--instruments", ",".join(instruments), "--wav2midi", "--midi2sheet"]
         if premium: callList.append("--premium")
         output = subprocess.check_output(callList)
-
         informNotUsedInstrumentsFromOutput(output)
-
         filename0 = filename.split(".")[0]
         transcription = None
         if premium: 
@@ -204,9 +193,7 @@ def upload_file_youtube():
         path_to_audio = app.config['UPLOAD_FOLDER'] + title + '.wav' 
     
     output = subprocess.check_output(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet", "--premium"])
-
     informNotUsedInstrumentsFromOutput(output)
-
     transcription = None
     try:
         path = app.config['MIDI_DATA_FOLDER'] + filename + "/transcription.txt"
@@ -215,8 +202,6 @@ def upload_file_youtube():
     except:
         pass
 
-    flash("Succesfuly dowloaded audio from youtube and music sheet created!")  # Flashing the success or error message
-    
     # Copy generated sheets to static folder
     png_files = []
     origin = path_to_audio.replace("audio/","sheet/").replace(".wav","")
@@ -234,6 +219,8 @@ def upload_file_youtube():
     path_to_destin = path_to_destin + f"/{filename}.zip"
     shutil.copyfile(path_to_zip, path_to_destin)
     to_zip_youtube = path_to_destin.replace("app/","")
+
+    flash("Succesfuly dowloaded audio from youtube and music sheet created!")
     
     audios_available = [f.split(".")[0] for f in os.listdir(app.config['UPLOAD_FOLDER'])]
     return render_template("service.html", filename=filename, app_data=app_data, png_files=png_files, audios_available=audios_available,transcription=transcription,to_zip_youtube=to_zip_youtube)
@@ -270,7 +257,7 @@ def audio_to_midi():
         path_to_audio = app.config['UPLOAD_FOLDER'] + filename
         file.save(path_to_audio)
 
-        print("Calling python code")
+        print("Calling python code...")
         output = subprocess.check_output(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi"])
 
         informNotUsedInstrumentsFromOutput(output)
@@ -282,7 +269,6 @@ def audio_to_midi():
         path_to_destin = path_to_destin + "/combined.mid"
         shutil.copyfile(path_to_midi, path_to_destin)
         path_to_destin = path_to_destin.replace("app/","")
-
     else:
         return 'Invalid file format. Please upload a .wav file.'
     

@@ -1,7 +1,7 @@
 import os
 import pretty_midi
 
-# Extreu coses del Lakh clean midi, per ara no utilitzat
+# Not used in the actual version
 
 def find_midi_files(root_folder):
     for subdir, dirs, files in os.walk(root_folder):

@@ -12,11 +12,9 @@ chrome.storage.local.get('youtubeURL', function(data) {
                 chrome.storage.local.remove('filename', function () {
                     console.log('filename has been removed from storage');
                 });
-        
-            }
-            else {
+
                 // Find the button and click it
-                var submitButton = document.getElementById('submitButtonYT'); // Replace with the actual button ID
+                var submitButton = document.getElementById('submitButtonYT');
                 if (submitButton) {
                     submitButton.click();
                     console.log('Button clicked.');
