@@ -55,12 +55,43 @@ def midi2Sheet_2(input_path, output_path, SEPARATOR):
     
     # Run MuseScore to convert the MIDI file to sheet music
     ###### I think is not taking the styles form there ######
-    subprocess.run([musescore_command, input_path, "-o", outPathNoExtension+".pdf", "--style", SEPARATOR.join(["data","sheet","style.mss"])])
-    subprocess.run([musescore_command, input_path, "-o", outPathNoExtension+".png"])
-    
+    # subprocess.run([musescore_command, input_path, "-o", outPathNoExtension+".pdf"])
+
     # Add logo to pdf
-    addLogoToPDF(outPathNoExtension+".pdf", outPathNoExtension+".pdf",
-                 'app/static/logos/logo_white.png', x_position=475, y_position=750)
+    # addLogoToPDF(outPathNoExtension+".pdf", outPathNoExtension+".pdf",
+    #              'app/static/logos/logo_white.png')
+    
+    subprocess.run([musescore_command, input_path, "-o", outPathNoExtension+".png"])
+
+    path = SEPARATOR.join((outPathNoExtension+".png").split(SEPARATOR)[:-1])
+    i = 0
+    for image in os.listdir(path):
+        if not image.endswith(".png"): continue
+        background = Image.open(path+SEPARATOR+image)
+        foreground = Image.open('app/static/logos/logo_white_alpha.png')
+        background = background.convert("RGBA")
+        foreground = foreground.convert("RGBA")
+
+        # Create a new alpha channel with reduced opacity
+        alpha = Image.new('L', foreground.size, 127)  # Using 127 for 50% transparency
+
+        # Split the channels from the original image and swap the alpha channel
+        r, g, b, _ = foreground.split()
+        foreground = Image.merge('RGBA', (r, g, b, alpha))
+
+        # Create a new image for the result
+        result = Image.alpha_composite(background, foreground)
+
+        # mask = foreground.split()[3]
+        # # Paste the foreground onto the background using the mask
+        # background.paste(foreground, (0, 0), mask)
+
+        # background.paste(foreground, (0, 0), foreground)
+        result.save(path+SEPARATOR+f"xd{i}.png")
+        i += 1
+
+    
+    
     
     
 def modifyMusicXML(path):
@@ -85,21 +116,99 @@ def modifyMusicXML(path):
     f.close()
     print("Done applying modifications to musicXML.", end="")
 
-def addLogoToPDF(input_pdf_path, output_pdf_path, logo_path, x_position, y_position):
+def addLogoToPDF2(input_pdf_path, output_pdf_path, logo_path):
     with open(input_pdf_path, 'rb') as input_pdf_file:
         pdf_reader = PyPDF2.PdfReader(input_pdf_file)
         pdf_writer = PyPDF2.PdfWriter()
 
         for page_number in range(len(pdf_reader.pages)):
             page = pdf_reader.pages[page_number]
-            if page_number == 0:
-                packet = BytesIO()
-                can = canvas.Canvas(packet, pagesize=A4)
-                can.drawImage(logo_path, x_position, y_position, width=75, height=75)
-                can.save()
-                packet.seek(0)
-                overlay = PyPDF2.PdfReader(packet)
-                page.merge_page(overlay.pages[0])
+            packet = BytesIO()
+            can = canvas.Canvas(packet, pagesize=A4)
+            width = 150
+            height = 150
+            x_position = int((page.mediabox[2] - page.mediabox[0] - width) / 2)
+            y_position = int((page.mediabox[3] - page.mediabox[1] - height) / 2)
+            can.drawImage(logo_path, x_position, y_position, width=width, height=height, mask=[0,2,40,42,136,139])
+            can.save()
+            packet.seek(0)
+            overlay = PyPDF2.PdfReader(packet)
+            page.merge_page(overlay.pages[0])
             pdf_writer.add_page(page)
         with open(output_pdf_path, 'wb') as output_pdf_file:
             pdf_writer.write(output_pdf_file)
+
+import fitz  # PyMuPDF
+from PyPDF2 import PageObject
+# from PyPDF2 import PdfFileReader, PdfFileWriter
+from PIL import Image
+
+def addLogoToPDF(input_pdf_path, output_pdf_path, logo_path):
+    # with open(input_pdf_path, 'rb') as input_pdf_file:
+    # pdf_reader = PyPDF2.PdfReader(input_pdf_file)
+    pdf_writer = PyPDF2.PdfWriter()
+    # Create a PDF writer object
+    # pdf_writer = PdfFileWriter()
+
+    # Read the existing PDF
+    existing_pdf = PyPDF2.PdfReader(open(input_pdf_path, "rb"))
+
+    # logoPdf = PyPDF2.PdfReader(open("data/sheet/name.pdf", "rb"))
+    # logoPdf_image = fitz.Pixmap(logoPdf)
+
+    for page_number in range(len(existing_pdf.pages)):
+        pdf_page = existing_pdf.pages[page_number]
+
+
+        pdf_page_image = pdf_page.get_pixmap()
+
+        background_image = Image.open(logo_path)
+
+        background_image = background_image.resize((pdf_page_image.width, pdf_page_image.height))
+
+        # Merge the background image and PDF page with alpha
+        blended_image = Image.blend(background_image, pdf_page_image, alpha=0.5)
+
+        # Create a new PDF page from the blended image
+        new_pdf_page = fitz.open()
+        new_pdf_page.new_page(width=pdf_page.rect.width, height=pdf_page.rect.height)
+        new_pdf_page[-1].insert_pixmap(fitz.Rect(0, 0, pdf_page.rect.width, pdf_page.rect.height), pixmap=blended_image)
+
+        # Add the new page to the PDF writer
+        pdf_writer.addPage(new_pdf_page[-1])
+
+
+        # doc = fitz.open(input_pdf_path)
+        # page = doc[page_number]
+
+        # # Get the size of the page
+        # width, height = page.rect.width, page.rect.height
+
+        # # Create a new page with the same dimensions
+        # new_page = PageObject.create_blank_page(width, height)
+
+        # # Merge the existing PDF content onto the new page
+        # new_page.mergeTranslatedPage(page, 0, 0)
+
+        # # Add the image with alpha 0.5 as a background
+        # image = fitz.Image(logo_path)
+        # image.set_opacity(0.5)
+        # new_page.insertImage(page.rect, pixmap=image)
+
+        # # Add the new page to the PDF writer
+        # pdf_writer.addPage(new_page)
+
+        # packet = BytesIO()
+        # can = canvas.Canvas(packet, pagesize=A4)
+        # width = 150
+        # height = 150
+        # x_position = int((page.mediabox[2] - page.mediabox[0] - width) / 2)
+        # y_position = int((page.mediabox[3] - page.mediabox[1] - height) / 2)
+        # can.drawImage(logo_path, x_position, y_position, width=width, height=height, mask=[0,2,40,42,136,139])
+        # can.save()
+        # packet.seek(0)
+        # overlay = PyPDF2.PdfReader(packet)
+        # page.merge_page(overlay.pages[0])
+
+    with open(output_pdf_path, 'wb') as output_pdf_file:
+        pdf_writer.write(output_pdf_file)

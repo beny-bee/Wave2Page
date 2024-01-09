@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import re
 import shutil
 import subprocess
 from flask import Flask, render_template, redirect, request, send_from_directory, url_for, flash
-from services import youtubeService as ys
+import youtubeService as ys
 
 DEVELOPMENT_ENV = True
 PYTHONUNBUFFERED=0
@@ -89,10 +90,6 @@ def service():
 def contact():
     return render_template("contact.html", app_data=app_data)
 
-# @app.route('/images/<filename>')
-# def serve_image(filename):
-#     return send_from_directory(app.config['PNG_FOLDER']+filename.split(".")[0], filename)
-
 @app.route('/submit', methods=['POST'])
 def submit():
     # Check if request is post and the form is submitted
@@ -127,12 +124,18 @@ def upload_file():
         path_to_audio = app.config['UPLOAD_FOLDER'] + filename
         file.save(path_to_audio)
 
-        instruments = []
-        for ins in ["bass", "drums", "guitar", "other", "piano", "vocals"]:
-            if ins in request.form:
-                instruments.append(ins)
+        instruments = [ins for ins in ["bass", "drums", "guitar", "other", "piano", "vocals"] if ins in request.form]
 
-        subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--instruments", ",".join(instruments), "--wav2midi", "--midi2sheet"])
+        #check_output
+        output = subprocess.check_output(['python3', "src/main.py", path_to_audio, "--separate", "--instruments", ",".join(instruments), "--wav2midi", "--midi2sheet"])
+
+        pattern = r'\*\*\*~\*\*\* (.*?) \*\*\*~\*\*\*\|'
+        noUsedInstruments = re.findall(pattern, str(output))
+        if len(noUsedInstruments) == 1:
+            flash(f"The {noUsedInstruments[0]} was not found in the provided song")
+        else:
+            noUsedInstrumentsAux = ", ".join(noUsedInstruments[:-1])
+            flash(f"The instruments {noUsedInstrumentsAux} and {noUsedInstruments[-1]} were not found in the provided song")
 
         # Copy generated sheets to static folder
         png_files = []
@@ -145,7 +148,8 @@ def upload_file():
                 destin = destin_folder+"/"+f
                 shutil.copyfile(origin+"/"+f, destin)
                 png_files.append(destin.replace("app/",""))
-                print(png_files)
+
+        flash("Succesfuly generated data sheet!")
         
         return render_template("index.html", app_data=app_data, png_files=png_files)
     else:
@@ -158,14 +162,9 @@ def upload_file_youtube():
 
     title = ys.YoutubeAudioDownload(video_url, app.config['UPLOAD_FOLDER'])
     
-    flash("Succesfuly dowloaded audio from youtube!")  # Flashing the success or error message
-    
     if filename != '':
         path_to_audio_long = app.config['UPLOAD_FOLDER']+title+'.wav'
-        path_to_audio = app.config['UPLOAD_FOLDER'] + filename + '.wav'
-    
-        print("Calling python code:", path_to_audio)
-        
+        path_to_audio = app.config['UPLOAD_FOLDER'] + filename + '.wav'        
         shutil.copyfile(path_to_audio_long, path_to_audio)
         os.remove(path_to_audio_long)
     else :
@@ -173,7 +172,8 @@ def upload_file_youtube():
     flash("System working on sheet generation...")
     
     subprocess.call(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet"])
-    flash(filename+" - Succesful!")
+
+    flash("Succesfuly dowloaded audio from youtube and music sheet created!")  # Flashing the success or error message
     
     # Copy generated sheets to static folder
     png_files = []

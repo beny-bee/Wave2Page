@@ -37,7 +37,7 @@ def convert_audio_to_midi(input_path, output_path, tempo):
             continue
         input_audio_path = os.path.join(input_path, audio_file)
         if utils.is_audio_silent(input_audio_path):
-            print(f"TODO, return that {instrument} will not be used and show it to the user")
+            print(f"***~*** {instrument} ***~***|")
             continue
         if instrument == 'vocals':
             wav2midi.transcribe_vocals(input_audio_path, output_path)
@@ -52,7 +52,6 @@ def convert_audio_to_midi(input_path, output_path, tempo):
     midi_files = [os.path.join(output_path, midi_file) for midi_file in os.listdir(output_path) if midi_file.endswith(".mid")]
     midi_files = sorted(midi_files, key=utils.sort_paths)
     wav2midi.combine_midi_files(midi_files, f'{output_path}{SEPARATOR}combined.mid', tempo)
-    #wav2midi.combine_midi_files(midi_files, f'{output_path}{SEPARATOR}combined.mid', instruments, tempo)
        
 def convert_midi_to_sheet(input_path, output_path):
     output_path = output_path if output_path[-1] == SEPARATOR else output_path + SEPARATOR

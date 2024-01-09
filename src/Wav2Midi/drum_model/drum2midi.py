@@ -106,7 +106,7 @@ def drum_2_midi(audio_path, bpm=120, top_n=3):
 
         # Extract features and predict top N hits
         predicted_labels = model_classify(clip, model, sr, top_n=top_n)
-        if not predicted_labels:
+        if predicted_labels is None:
             continue
 
         onset_tick = int(onset_time * ticks_per_beat * bpm / 60)
