@@ -7,7 +7,7 @@ from io import BytesIO
 from bs4 import BeautifulSoup
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-
+from zipfile import ZipFile
 
 #warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -63,8 +63,8 @@ def midi2Sheet_2(input_path, output_path, SEPARATOR, premium):
     
     subprocess.run([musescore_command, input_path, "-o", outPathNoExtension+".png"])
 
+    path = SEPARATOR.join((outPathNoExtension+".png").split(SEPARATOR)[:-1])
     if not premium:
-        path = SEPARATOR.join((outPathNoExtension+".png").split(SEPARATOR)[:-1])
         for image in os.listdir(path):
             if not image.endswith(".png"): continue
             background = Image.open(path+SEPARATOR+image)
@@ -76,7 +76,11 @@ def midi2Sheet_2(input_path, output_path, SEPARATOR, premium):
             foreground = Image.merge('RGBA', (r, g, b, alpha))
             result = Image.alpha_composite(background, foreground)
             result.save(path+SEPARATOR+image)
-    
+
+    with ZipFile(path+SEPARATOR+sheetName+".zip", 'w') as zip_object:
+        for image in os.listdir(path):
+            if not image.endswith(".png"): continue
+            zip_object.write(path+SEPARATOR+image, image)
     
 def modifyMusicXML(path):
     with open(path, 'r') as f:

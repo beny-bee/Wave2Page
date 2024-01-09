@@ -146,20 +146,6 @@
             /*flex-grow: 1; /* This makes the slider and button fill the rest of the container */
             text-align: center;
         }
-        div#loaderMidi {
-            border: 16px solid #f3f3f3;
-            border-top: 16px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: none;
-            animation: spin 2s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 
     <!-- Youtube service -->
@@ -175,31 +161,66 @@
             <label for="filename">Audio name:</label>
             <input type="text" id="filename" name="filename">
         </div>
-        <input id="submitButtonYT" type="submit" value="Convert">
+        <input id="submitButtonYT" type="submit" value="Convert" onclick="loading('#loaderYoutube');">
     </form>
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="message">
-            {% for message in messages %}
-            <p>{{ message }}</p>
-            {% endfor %}
+    <div id="loaderYoutube">
+        <div style="height: 15px;"></div>
+        <div class="body-wavy">
+            <div class="wavy">
+                <span style="--i:1">L</span>
+                <span style="--i:2">o</span>
+                <span style="--i:3">a</span>
+                <span style="--i:4">d</span>
+                <span style="--i:5">i</span>
+                <span style="--i:6">n</span>
+                <span style="--i:7">g</span>
+                <span style="--i:8">.</span>
+                <span style="--i:9">.</span>
+                <span style="--i:10">.</span>
+            </div>
         </div>
-        {% endif %}
-    {% endwith %}
+    </div>
 
     {% if filename%}
-        <p>The file '{{ filename }}' was successfully uploaded.</p>
+        <div style="height: 15px;"></div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="message">
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if transcription%}
+            <div style="height: 15px;"></div>
+            <h5>Song transcription:</h5>
+            <h9>{{transcription}}</h9>
+            <div style="height: 30px;"></div>
+        {% endif %}
 
         {% for image in png_files %}
-            <li>
-                <img src="{{image}}" alt="{{image}}" height="1000">
-            </li>
+            <img src="{{image}}" alt="{{image}}" height="1000">
         {% endfor %}
+
+        {% if to_zip_youtube %}
+        <div class="form-group">
+            <div class="child">
+                <h5>Download your music sheet</h5>
+                <a href="{{ to_zip_youtube }}" download="{{ to_zip_youtube.split('/')[-1] }}">
+                    <button class="download-button">
+                        <img src="{{ url_for('static', filename='icons/download_icon.svg') }}" alt="Download">
+                    </button>
+                </a>
+            </div>
+        </div>
+        {% endif %}
 
     {% endif %}
 
-    <div style="height: 25px;"></div>
+    <div style="height: 55px;"></div>
     
     <!-- Service of independet tracks -->
     <script>
@@ -212,12 +233,15 @@
     <form id="volume" action="/tracks_volume" method="post">
         <h2>Independent tracks</h2>
         <h5>Select an already processed audio</h5>
-        <select name="select" id="filename">
-            {% for audio in audios_available %}
-                <option id="filename"value={{audio}}>{{audio}}</option>
-            {% endfor %}
-        </select>
-        <input type="submit" value="Use">
+        <div style="display: flex; flex-direction: row;">
+            <select name="select" id="filename">
+                {% for audio in audios_available %}
+                    <option id="filename"value={{audio}}>{{audio}}</option>
+                {% endfor %}
+            </select>
+            <div style="width: 15px;"></div>
+            <input type="submit" value="Use">
+        </div>
     </form>
 
     {% if audio_files%}
@@ -282,7 +306,6 @@
 
     <!-- Service audio to midi -->
 
-
     <style>
         input[type="file"] {
           font-size: 16px; /* Match the button's font-size */
@@ -328,22 +351,92 @@
             <input id="upload_button" type="submit" class="custom-button" value="Convert" onclick="loading('#loaderMidi');">
         </div>
     </form>
+
     {% if to_midi %}
-    <div class="form-group">
-        <div class="child">
-            <h5>Download your audio</h5>
-            <a href="{{ to_midi }}" download="{{ to_midi.split('/')[-1] }}">
-                <button class="download-button">
-                    <img src="{{ url_for('static', filename='icons/download_icon.svg') }}" alt="Download">
-                </button>
-            </a>
+        <div style="height: 15px;"></div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="message">
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+        <div class="form-group">
+            <div class="child">
+                <h5>Download your MIDI file</h5>
+                <a href="{{ to_midi }}" download="{{ to_midi.split('/')[-1] }}">
+                    <button class="download-button">
+                        <img src="{{ url_for('static', filename='icons/download_icon.svg') }}" alt="Download">
+                    </button>
+                </a>
+            </div>
         </div>
-    </div>
     {% endif %}
 
     &nbsp
 
-    <div id="loaderMidi"></div>
+    <div id="loaderMidi">
+        <div class="body-wavy">
+            <div class="wavy">
+                <span style="--i:1">L</span>
+                <span style="--i:2">o</span>
+                <span style="--i:3">a</span>
+                <span style="--i:4">d</span>
+                <span style="--i:5">i</span>
+                <span style="--i:6">n</span>
+                <span style="--i:7">g</span>
+                <span style="--i:8">.</span>
+                <span style="--i:9">.</span>
+                <span style="--i:10">.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- <script type="text/javascript">
+        function loading(name){
+            $(name).show();  
+        }
+    </script> -->
+    <style>
+        .body-wavy{
+            font-family: consolas;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            /* min-height: 100vh; */
+        }
+        .wavy {
+            position: relative;
+            -webkit-box-reflect: below -12px linear-gradient(transparent, rgb(0,0,0,0.3));
+        }
+        .wavy span{
+            position: relative;
+            display: inline-block;
+            color: #003063;
+            font-size: 2em;
+            animation: animate 1s ease-in-out infinite;
+            animation-delay: calc(0.1s * var(--i));
+        }
+        @keyframes animate {
+            0%{
+            transform: translateY(0px);
+            }
+            20%{
+            transform: translateY(-20px);
+            }
+            40%,100%{
+            transform: translateY(0px);
+            }
+        }
+        div#loaderYoutube {
+            display: none;
+        }
+        div#loaderMidi {
+            display: none;
+        }
+    </style>
 
     <script type="text/javascript">
         function loading(name){

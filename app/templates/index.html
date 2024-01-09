@@ -173,6 +173,19 @@
         {% endfor %}
     {% endif %}
 
+    {% if to_zip %}
+      <div class="form-group">
+          <div class="child">
+              <h5>Download your music sheet</h5>
+              <a href="{{ to_zip }}" download="{{ to_zip.split('/')[-1] }}">
+                  <button class="download-button">
+                      <img src="{{ url_for('static', filename='icons/download_icon.svg') }}" alt="Download">
+                  </button>
+              </a>
+          </div>
+      </div>
+    {% endif %}
+
     <style>
       .body-wavy{
         font-family: consolas;
@@ -270,6 +283,31 @@
           cursor: pointer;
           font-size: 16px;
           line-height: 1.5;
+      }
+
+      .download-button {
+          border-radius: 50%;
+          width: 30px; /* Adjust as needed */
+          height: 30px; /* Adjust as needed */
+          line-height: 30px; /* Not necessary when using flexbox, can be removed */
+          background-color: #007bff;
+          color: white;
+          border: none;
+          cursor: pointer;
+          display: flex; /* Using flexbox to center the content */
+          justify-content: center; /* Center horizontally */
+          align-items: center; /* Center vertically */
+          padding: 0; /* Remove padding to avoid affecting the centering */
+      }
+      
+      .download-button img {
+          width: 20px; /* Adjust the size of the icon as needed */
+          height: auto;
+          filter: brightness(0) invert(1);
+          /* text-align: center; Not necessary, remove this */
+      }
+      .download-button:hover {
+          background-color: #0056b3; /* Hover effect to match .custom-button */
       }
         
     </style>

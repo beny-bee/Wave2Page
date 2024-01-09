@@ -42,6 +42,10 @@ app.config['MIDI_FOLDER'] = 'app/static/midi/'
 if not os.path.exists(app.config['MIDI_FOLDER']):
     os.makedirs(app.config['MIDI_FOLDER'])
 
+app.config['SHEET_FOLDER'] = 'app/static/sheet/'
+if not os.path.exists(app.config['SHEET_FOLDER']):
+    os.makedirs(app.config['SHEET_FOLDER'])
+
 app.config['WAV_FOLDER'] = 'app/static/audio/'
 if not os.path.exists(app.config['WAV_FOLDER']):
     os.makedirs(app.config['WAV_FOLDER'])
@@ -147,10 +151,11 @@ def upload_file():
 
         informNotUsedInstrumentsFromOutput(output)
 
+        filename0 = filename.split(".")[0]
         transcription = None
         if premium: 
             try:
-                path = app.config['MIDI_DATA_FOLDER'] + filename.split(".")[0] + "/transcription.txt"
+                path = app.config['MIDI_DATA_FOLDER'] + filename0 + "/transcription.txt"
                 with open(path) as f:
                     transcription = f.read()
             except:
@@ -161,16 +166,25 @@ def upload_file():
         origin = path_to_audio.replace("audio/","sheet/").replace(".wav","")
         for f in os.listdir(origin):
             if f.endswith('.png'):
-                destin_folder = app.config['PNG_FOLDER']+filename.split(".")[0]
+                destin_folder = app.config['PNG_FOLDER']+filename0
                 if not os.path.exists(destin_folder):
                     os.makedirs(destin_folder)
                 destin = destin_folder+"/"+f
                 shutil.copyfile(origin+"/"+f, destin)
                 png_files.append(destin.replace("app/",""))
 
+        # Copy zip to static folder
+        path_to_zip = app.config['UPLOAD_FOLDER'].replace("/audio","/sheet") + filename0 + f"/{filename0}.zip"
+        path_to_destin = app.config['SHEET_FOLDER'] + filename0
+        if not os.path.exists(path_to_destin):
+            os.makedirs(path_to_destin)
+        path_to_destin = path_to_destin + f"/{filename0}.zip"
+        shutil.copyfile(path_to_zip, path_to_destin)
+        to_zip= path_to_destin.replace("app/","")
+
         flash("Succesfuly generated data sheet!")
         
-        return render_template("index.html", app_data=app_data, png_files=png_files, transcription=transcription)
+        return render_template("index.html", app_data=app_data, png_files=png_files, transcription=transcription, to_zip=to_zip)
     else:
         return 'Invalid file format. Please upload a .wav file.'
 
@@ -188,11 +202,18 @@ def upload_file_youtube():
         os.remove(path_to_audio_long)
     else:
         path_to_audio = app.config['UPLOAD_FOLDER'] + title + '.wav' 
-    flash("System working on sheet generation...")
     
     output = subprocess.check_output(['python3', "src/main.py", path_to_audio, "--separate", "--wav2midi", "--midi2sheet", "--premium"])
 
     informNotUsedInstrumentsFromOutput(output)
+
+    transcription = None
+    try:
+        path = app.config['MIDI_DATA_FOLDER'] + filename + "/transcription.txt"
+        with open(path) as f:
+            transcription = f.read()
+    except:
+        pass
 
     flash("Succesfuly dowloaded audio from youtube and music sheet created!")  # Flashing the success or error message
     
@@ -204,9 +225,18 @@ def upload_file_youtube():
             destin = app.config['PNG_FOLDER']+f
             shutil.copyfile(origin+"/"+f, destin)
             png_files.append(destin.replace("app/",""))
+
+    # Copy zip to static folder
+    path_to_zip = app.config['UPLOAD_FOLDER'].replace("/audio","/sheet") + filename + f"/{filename}.zip"
+    path_to_destin = app.config['SHEET_FOLDER'] + filename
+    if not os.path.exists(path_to_destin):
+        os.makedirs(path_to_destin)
+    path_to_destin = path_to_destin + f"/{filename}.zip"
+    shutil.copyfile(path_to_zip, path_to_destin)
+    to_zip_youtube = path_to_destin.replace("app/","")
     
     audios_available = [f.split(".")[0] for f in os.listdir(app.config['UPLOAD_FOLDER'])]
-    return render_template("service.html", filename=filename, app_data=app_data, png_files=png_files, audios_available=audios_available)
+    return render_template("service.html", filename=filename, app_data=app_data, png_files=png_files, audios_available=audios_available,transcription=transcription,to_zip_youtube=to_zip_youtube)
 
 @app.route('/tracks_volume', methods=['POST'])
 def tracks_volume():
