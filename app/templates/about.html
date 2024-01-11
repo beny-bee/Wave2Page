@@ -25,7 +25,7 @@
     padding-right: 5px; /* Space between text and logo */
 }
 .logo {
-    max-width: 25%; /* Adjust this value to set the maximum width */
+    max-width: 30%; /* Adjust this value to set the maximum width */
     max-height: 25%; /* This will make sure the height is not more than the container's height */
     display: block;
     width: 500;  /* Adjusts the width to maintain aspect ratio */
@@ -218,8 +218,17 @@ input:checked + label .description {
 <div class="project-info">
     <div class="project-description">
         <h2>Welcome to Wave2Page</h2>
-        <p>
+        <!-- <p>
             Wave2Page is an innovative project initiated by students of UPC, focusing on converting music into sheet notation and offering various audio services based on AI technology. Our mission is to bridge the gap between audio and musical notation, making it easier for musicians and enthusiasts to transcribe and understand music. We leverage the latest AI advancements to provide accurate and efficient services.
+        </p> -->
+        <p>
+            Wave2Page, an innovative system initiated by students of UPC, is set to revolutionize the field of musical transcription. This intelligent project aims to transform multi-instrument audio recordings into digital sheet music, thereby bridging the gap between audio and musical notation.
+        </p>
+        <p>
+            It offers a comprehensive solution that caters to a wide array of instruments pivotal in popular music genres, including vocals, guitar, bass, piano, and percussion. By leveraging the latest advancements in AI and audio processing technologies, Wave2Page provides accurate and efficient services, making music transcription and understanding more accessible for musicians and enthusiasts alike.
+        </p>
+        <p>
+            This practical approach aligns with the current capabilities in music transcription technologies, marking Wave2Page as a cutting-edge system in the landscape of musical transcription.
         </p>
     </div>
         <img src="{{ url_for('static', filename='logos/logo_white.png') }}" alt="Wave2Page Logo" class="logo">

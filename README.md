@@ -1,6 +1,9 @@
 # Wave2Page
 Intelligent System Project (ISP) - Master in Artificial Intelligence
 
+## About
+Wave2Page is an innovative project initiated by students of UPC, focusing on converting music into sheet notation and offering various audio services based on AI technology. Our mission is to bridge the gap between audio and musical notation, making it easier for musicians and enthusiasts to transcribe and understand music. We leverage the latest AI advancements to provide accurate and efficient services.
+
 ## Authors
 - Gerard Carvaca
 - Benjami Parellada
