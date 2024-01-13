@@ -57,7 +57,7 @@ def instrument_name_to_program(instrument_name):
     elif instrument_name == 'vocals':
         return 52
     elif instrument_name == 'bass':
-        return 32
+        return 33
     elif instrument_name == 'guitar':
         return 26
     elif instrument_name == 'drums':

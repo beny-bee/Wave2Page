@@ -4,12 +4,11 @@ import os
 import re
 import shutil
 import subprocess
-from flask import Flask, render_template, redirect, request, send_from_directory, url_for, flash
+from flask import Flask, render_template, redirect, request, flash
 import youtubeService as ys
 
 DEVELOPMENT_ENV = True
 PYTHONUNBUFFERED=0
-
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -50,66 +49,67 @@ app.config['WAV_FOLDER'] = 'app/static/audio/'
 if not os.path.exists(app.config['WAV_FOLDER']):
     os.makedirs(app.config['WAV_FOLDER'])
 
+# Render the home page template
 @app.route("/")
 def index():
     return render_template("index.html", app_data=app_data)
 
+# Render the about template
 @app.route('/about')
 def pricing():
     pricing_tiers = [
-    {
-        'name': 'Free Tier',
-        'purpose': 'Start using the basic functionalities for free and get a taste of the services with some limitations.',
-        'pricing': '€0.0/month or €0.0/year',
-        'features': ['5 conversions per month', 'Access to basic features', 'Contains ads'],
-        'ideal_for': 'people just starting out or want to test the services.',
-    },
-    {
-        'name': 'Standard Subscription',
-        'purpose': 'Get full access to more dedicated features with a reasonable monthly or yearly fee.',
-        'pricing': '€4.99/month or €49/year',
-        'features': ['Unlimited access', 'No ads', 'Priority customer support'],
-        'ideal_for': 'regular users, amateur musicians...',
-    },
-    {
-        'name': 'Premium Subscription',
-        'purpose': 'Have access to professional-grade features and advanced needs with a premium subscription.',
-        'pricing': '€14.99/month or €149/year',
-        'features': ['Includes all Standard features', 'High-resolution outputs', 'Premium support'],
-        'ideal_for': 'professionals, music producers...',
-    },
-    {
-        'name': 'Pay-Per-Use',
-        'purpose': 'Can use services flexibly and pay only for what I use without a subscription.',
-        'pricing': '€0.5 per conversion',
-        'features': ['Access to specific services on a per-use basis'],
-        'ideal_for': 'people who need services occasionally or for one-time projects.',
-    }
-]
-
+        {
+            'name': 'Free Tier',
+            'purpose': 'Start using the basic functionalities for free and get a taste of the services with some limitations.',
+            'pricing': '€0.0/month or €0.0/year',
+            'features': ['5 conversions per month', 'Access to basic features', 'Contains ads'],
+            'ideal_for': 'people just starting out or want to test the services.',
+        },
+        {
+            'name': 'Standard Subscription',
+            'purpose': 'Get full access to more dedicated features with a reasonable monthly or yearly fee.',
+            'pricing': '€4.99/month or €49/year',
+            'features': ['Unlimited access', 'No ads', 'Priority customer support'],
+            'ideal_for': 'regular users, amateur musicians...',
+        },
+        {
+            'name': 'Premium Subscription',
+            'purpose': 'Have access to professional-grade features and advanced needs with a premium subscription.',
+            'pricing': '€14.99/month or €149/year',
+            'features': ['Includes all Standard features', 'High-resolution outputs', 'Premium support'],
+            'ideal_for': 'professionals, music producers...',
+        },
+        {
+            'name': 'Pay-Per-Use',
+            'purpose': 'Can use services flexibly and pay only for what I use without a subscription.',
+            'pricing': '€0.5 per conversion',
+            'features': ['Access to specific services on a per-use basis'],
+            'ideal_for': 'people who need services occasionally or for one-time projects.',
+        }
+    ]
     return render_template('about.html', pricing_tiers=pricing_tiers, app_data=app_data)
 
+# Render the home services template
 @app.route("/service")
 def service():
     audios_available = [f.split(".")[0] for f in os.listdir(app.config['UPLOAD_FOLDER'])]
     return render_template("service.html", app_data=app_data, audios_available=audios_available)
 
+## Contact ##
+# Render the home contact template
 @app.route("/contact")
 def contact():
     return render_template("contact.html", app_data=app_data)
 
+# Submit the form with the message to contact
 @app.route('/submit', methods=['POST'])
 def submit():
-    # Check if request is post and the form is submitted
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         message = request.form['message']
-
-        # For now, let's just flash a message that we've received the submission
+        # Flash a message that we've received the submission
         flash('Thank you, we have received your message!')
-
-        # Redirect back to the contact page, or to a 'thank you' page
         return render_template("contact.html", app_data=app_data)
 
 def informNotUsedInstrumentsFromOutput(output):
