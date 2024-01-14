@@ -12,7 +12,7 @@ Wave2Page is an innovative project initiated by students of UPC, focusing on con
 ## Directory 
 - **app:** user interface code and files.
 - **data:** examples provided as samples. It contains 3 folders providing several **songs** already separated by the system, the corresponding **midi** files and the generated music **sheets**.
-- ** src:** all the source code that makes up the system. It contains the functions that call the application and that compose the functionalities of the system.
+- **src:** all the source code that makes up the system. It contains the functions that call the application and that compose the functionalities of the system.
 - **youtube-extension:**  implementation of the google chrome extension. It must be compiled directly from the Chrome browser itself, in the configuration/extensions tab.
 - The requirements.txt and environment-cuda.yml files are necessary for the correct installation of the repository. Their uses are explained in the next section.
 
