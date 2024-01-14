@@ -202,12 +202,17 @@ def upload_file_youtube():
     except:
         pass
 
+    filename0 = ""
+
     # Copy generated sheets to static folder
     png_files = []
     origin = path_to_audio.replace("audio/","sheet/").replace(".wav","")
     for f in os.listdir(origin):
         if f.endswith('.png'):
-            destin = app.config['PNG_FOLDER']+f
+            destin_folder = app.config['PNG_FOLDER']+filename
+            if not os.path.exists(destin_folder):
+                os.makedirs(destin_folder)
+            destin = destin_folder+"/"+f
             shutil.copyfile(origin+"/"+f, destin)
             png_files.append(destin.replace("app/",""))
 
