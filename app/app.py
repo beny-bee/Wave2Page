@@ -202,8 +202,6 @@ def upload_file_youtube():
     except:
         pass
 
-    filename0 = ""
-
     # Copy generated sheets to static folder
     png_files = []
     origin = path_to_audio.replace("audio/","sheet/").replace(".wav","")
