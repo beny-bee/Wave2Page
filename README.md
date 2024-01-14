@@ -11,20 +11,23 @@ Wave2Page is an innovative project initiated by students of UPC, focusing on con
 
 ## Running interface for the first time
 These sections show how to create virtual environment for
-our script and how to install dependencies. The first thing to do is to install Python 3.11.
-1. Open folder in terminal
+our script and how to install dependencies. The first thing to do is to install Python 3.11. Then follow this instructions:
+
+1. Install MuseScore 4 on your distribution: https://musescore.org/en/download
+
+2. Open folder in terminal
 ```bash
 cd <root_folder_of_project>/
 ```
-2. Create virtual env
+3. Create virtual env
 ```bash
 python3 -m venv venv/
 ```
-3. Open virtual env
+4. Open virtual env
 ```bash
 source venv/bin/activate
 ```
-4. Install required dependencies
+5. Install required dependencies
 ```bash
 pip install -r requirements.txt
 ```
